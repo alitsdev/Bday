@@ -17,21 +17,41 @@ function createElement(id, x1, y1, x2, y2, type) {
     const center = { x: x1, y: y1 };
     const a = { x: x2, y: y2 };
     const radius = distance(center, a);
-    roughElement = generator.circle(
-      x1,
-      y1,
-      2 * radius
-    );
+    roughElement = generator.circle(x1, y1, 2 * radius);
+  }
+  if (type === 'triangle') {
+    roughElement = generator.polygon([
+      [x1, y1],
+      [x2, y2],
+      [x2 + x1, y2 + y1],
+    ]);
+  }
+  return { id, x1, y1, x2, y2, type, roughElement };
+}
+function paintElement(id, x1, y1, x2, y2, type, color) {
+  let roughElement;
+  if (type === 'line') {
+    roughElement = generator.line(x1, y1, x2, y2, { stroke: color });
+  }
+  if (type === 'rectangle') {
+    roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
+      fill: color
+    });
+  }
+  if (type === 'circle') {
+    const center = { x: x1, y: y1 };
+    const a = { x: x2, y: y2 };
+    const radius = distance(center, a);
+    roughElement = generator.circle(x1, y1, 2 * radius, { fill: color});
   }
   if (type === 'triangle') {
     roughElement = generator.polygon(
-      [[x1,
-      y1],
-      [x2,
-      y2],
-      [x2 + x1,
-      y2 + y1]
-      ]
+      [
+        [x1, y1],
+        [x2, y2],
+        [x2 + x1, y2 + y1],
+      ],
+      { fill: color}
     );
   }
   return { id, x1, y1, x2, y2, type, roughElement };
@@ -51,7 +71,6 @@ const isWithinElement = (x, y, element) => {
     const b = { x, y };
     const radius = distance(center, a);
     const offset = distance(center, b) - radius;
-    console.log(Math.abs(offset))
     return offset < 1;
   } else {
     const a = { x: x1, y: y1 };
@@ -68,149 +87,170 @@ const getElementAtPosition = (x, y, elements) => {
   return elements.find((element) => isWithinElement(x, y, element));
 };
 
-const Editor = (props) => {
-    const [elements, setElements] = useState([]);
-    const [action, setAction] = useState('none');
-    const [tool, setTool] = useState('line');
-    const [selectedElement, setSelectedElement] = useState(null);
-    const [pointerOffset, setPointerOffset] = useState(null);
+const Editor = () => {
+  const [elements, setElements] = useState([]);
+  const [action, setAction] = useState('none');
+  const [tool, setTool] = useState('line');
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [pointerOffset, setPointerOffset] = useState(null);
 
-    useLayoutEffect(() => {
-      const canvas = document.getElementById('canvas');
-      const context = canvas.getContext('2d');
+  useLayoutEffect(() => {
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
 
-      context.clearRect(0, 0, canvas.width, canvas.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-      const roughCanvas = rough.canvas(canvas);
-      elements.forEach((element) => roughCanvas.draw(element.roughElement));
-    }, [elements]);
+    const roughCanvas = rough.canvas(canvas);
+    elements.forEach((element) => roughCanvas.draw(element.roughElement));
+  }, [elements]);
 
-    const updateElement = (id, x1, y1, x2, y2, type) => {
-      const updatedElement = createElement(id, x1, y1, x2, y2, type);
-      const elementsCopy = [...elements];
-      elementsCopy[id] = updatedElement;
-      setElements(elementsCopy);
-    };
+  const updateElement = (id, x1, y1, x2, y2, type) => {
+    const updatedElement = createElement(id, x1, y1, x2, y2, type);
+    const elementsCopy = [...elements];
+    elementsCopy[id] = updatedElement;
+    setElements([...elementsCopy]);
+  };
 
-    function handleMouseDown(event) {
-      const { clientX, clientY } = event;
-      if (tool === 'selection') {
+  function handleMouseDown(event) {
+    const { clientX, clientY } = event;
+    if (tool === 'selection') {
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        const offsetX = clientX - element.x1;
+        const offsetY = clientY - element.y1;
+        setSelectedElement({ ...element });
+        setPointerOffset({ offsetX, offsetY });
+        setAction('moving');
+      }
+    }
+    else if (tool === 'paint') {
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        const { id, x1, y1, x2, y2, type } = element;
+        const color = 'red'
+        const paintedElement = paintElement(id, x1, y1, x2, y2, type, color);
+        const elementsCopy = [...elements];
+        elementsCopy[id] = paintedElement;
+        setElements([...elementsCopy]);
+      }
+    }
+    else if (tool === 'eraser') {
         const element = getElementAtPosition(clientX, clientY, elements);
         if (element) {
-          const offsetX = clientX - element.x1;
-          const offsetY = clientY - element.y1;
-          setSelectedElement({ ...element });
-          setPointerOffset({ offsetX, offsetY });
-          setAction('moving');
+          const { id } = element;
+          console.log('1', elements)
+          const elementsCopy = [...elements.slice(0, id), ...elements.slice(id + 1)];
+          console.log('2', elementsCopy)
+          setElements([...elementsCopy]);
         }
-      } else if (tool === 'triangle') {
-        const id = elements.length;
-        const element = createElement(
-          id,
-          clientX,
-          clientY,
-          clientX,
-          clientY,
-          tool
-          );
-        setElements((prevState) => [...prevState, element]);
-        setAction('drawing');
       }
-       else {
-        const id = elements.length;
-        const element = createElement(
-          id,
-          clientX,
-          clientY,
-          clientX,
-          clientY,
-          tool
-        );
-        setElements((prevState) => [...prevState, element]);
-        setAction('drawing');
-      }
+    else {
+      const id = elements.length;
+      const element = createElement(
+        id,
+        clientX,
+        clientY,
+        clientX,
+        clientY,
+        tool
+      );
+      setElements((prevState) => [...prevState, element]);
+      setAction('drawing');
     }
-    function handleMouseMove(event) {
-      const { clientX, clientY } = event;
+  }
+  function handleMouseMove(event) {
+    const { clientX, clientY } = event;
 
-      if (tool === 'selection') {
-        event.target.style.cursor = getElementAtPosition(
-          clientX,
-          clientY,
-          elements
-        )
-          ? 'move'
-          : 'default';
-      }
-      if (action === 'drawing') {
-        const index = elements.length - 1;
-        const { x1, y1 } = elements[index];
-        updateElement(index, x1, y1, clientX, clientY, tool);
-      } else if (action === 'moving') {
-        const { id, x1, x2, y1, y2, type} = selectedElement;
-        const { offsetX, offsetY } = pointerOffset;
-        const width = x2 - x1;
-        const height = y2 - y1;
-        const newX = clientX - offsetX;
-        const newY = clientY - offsetY;
-        updateElement(id, newX, newY, newX + width, newY + height, type);
-      }
+    if (tool === 'selection') {
+      event.target.style.cursor = getElementAtPosition(
+        clientX,
+        clientY,
+        elements
+      )
+        ? 'move'
+        : 'default';
     }
-    function handleMouseUp() {
-      setAction('none');
-      setSelectedElement(null);
+    if (action === 'drawing') {
+      const index = elements.length - 1;
+      const { x1, y1 } = elements[index];
+      updateElement(index, x1, y1, clientX, clientY, tool);
+    } else if (action === 'moving') {
+      const { id, x1, x2, y1, y2, type } = selectedElement;
+      const { offsetX, offsetY } = pointerOffset;
+      const width = x2 - x1;
+      const height = y2 - y1;
+      const newX = clientX - offsetX;
+      const newY = clientY - offsetY;
+      updateElement(id, newX, newY, newX + width, newY + height, type);
     }
+  }
+  function handleMouseUp() {
+    setAction('none');
+    setSelectedElement(null);
+  }
 
-    return (
-      <div className='App'>
-        <div style={{ position: 'fixed' }}>
-          <input
-            type='radio'
-            id='selection'
-            checked={tool === 'selection'}
-            onChange={() => setTool('selection')}
-          />
-          <label htmlFor='selection'>Selection</label>
-          <input
-            type='radio'
-            id='line'
-            checked={tool === 'line'}
-            onChange={() => setTool('line')}
-          />
-          <label htmlFor='line'>Line</label>
-          <input
-            type='radio'
-            id='triangle'
-            checked={tool === 'triangle'}
-            onChange={() => setTool('triangle')}
-          />
-          <label htmlFor='triangle'>Triangle</label>
-          <input
-            type='radio'
-            id='rectangle'
-            checked={tool === 'rectangle'}
-            onChange={() => setTool('rectangle')}
-          />
-          <label htmlFor='rectangle'>Rectangle</label>
-          <input
-            type='radio'
-            id='circle'
-            checked={tool === 'circle'}
-            onChange={() => setTool('circle')}
-          />
-          <label htmlFor='circle'>Circle</label>
-        </div>
-        <canvas
-          id='canvas'
-          width={window.innerWidth}
-          height={window.innerHeight}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-        ></canvas>
+  return (
+    <div className='Editor'>
+      <div style={{ position: 'fixed' }}>
+        <input
+          type='radio'
+          id='eraser'
+          checked={tool === 'eraser'}
+          onChange={() => setTool('eraser')}
+        />
+        <label htmlFor='eraser'>Eraser</label>
+        <input
+          type='radio'
+          id='paint'
+          checked={tool === 'paint'}
+          onChange={() => setTool('paint')}
+        />
+        <label htmlFor='paint'>Paint</label>
+        <input
+          type='radio'
+          id='selection'
+          checked={tool === 'selection'}
+          onChange={() => setTool('selection')}
+        />
+        <label htmlFor='selection'>Selection</label>
+        <input
+          type='radio'
+          id='line'
+          checked={tool === 'line'}
+          onChange={() => setTool('line')}
+        />
+        <label htmlFor='line'>Line</label>
+        <input
+          type='radio'
+          id='triangle'
+          checked={tool === 'triangle'}
+          onChange={() => setTool('triangle')}
+        />
+        <label htmlFor='triangle'>Triangle</label>
+        <input
+          type='radio'
+          id='rectangle'
+          checked={tool === 'rectangle'}
+          onChange={() => setTool('rectangle')}
+        />
+        <label htmlFor='rectangle'>Rectangle</label>
+        <input
+          type='radio'
+          id='circle'
+          checked={tool === 'circle'}
+          onChange={() => setTool('circle')}
+        />
+        <label htmlFor='circle'>Circle</label>
       </div>
-    );
-
-
-    };
- export default Editor;
+      <canvas
+        id='canvas'
+        width={window.innerWidth}
+        height={window.innerHeight}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+      ></canvas>
+    </div>
+  );
+};
+export default Editor;
