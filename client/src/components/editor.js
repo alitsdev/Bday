@@ -1,48 +1,77 @@
-import React from 'react';
-
-import { useLayoutEffect, useState } from 'react';
+import { useState, useLayoutEffect, useEffect } from 'react';
 import rough from 'roughjs/bundled/rough.esm.js';
+import { getTemplate, postTemplate } from '../services/server-client';
+import TextForm from './text-form';
 
 const generator = rough.generator();
+
+function writeText(info, style = {}, medium) {
+  const { text, x, y } = info;
+  const {
+    fontSize = 40,
+    fontFamily = 'Comic Sans MS',
+    color = 'black',
+    textAlign = 'left',
+    textBaseline = 'top',
+  } = style;
+
+  medium.beginPath();
+  medium.font = fontSize + 'px ' + fontFamily;
+  medium.textAlign = textAlign;
+  medium.textBaseline = textBaseline;
+  medium.fillStyle = color;
+  medium.fillText(text, x, y);
+  medium.stroke();
+}
+
+function writeDetails(text, medium, ctx) {
+  writeText(
+    { text: `${text.name}`, x: medium.width / 2, y: 100 },
+    { textAlign: 'center' },
+    ctx
+  );
+  writeText(
+    { text: 'is turning', x: medium.width / 2, y: 150 },
+    { textAlign: 'center' },
+    ctx
+  );
+  writeText(
+    { text: `${text.age}`, x: medium.width / 2, y: 200 },
+    { textAlign: 'center' },
+    ctx
+  );
+  writeText(
+    { text: 'Join us for lots of fun on', x: medium.width / 2, y: 250 },
+    { textAlign: 'center' },
+    ctx
+  );
+  writeText(
+    { text: `${text.date} at ${text.time}`, x: medium.width / 2, y: 300 },
+    { textAlign: 'center' },
+    ctx
+  );
+  writeText(
+    { text: `${text.address}`, x: medium.width / 2, y: 350 },
+    { textAlign: 'center' },
+    ctx
+  );
+}
 
 function createElement(id, x1, y1, x2, y2, type) {
   let roughElement;
   if (type === 'line') {
-    roughElement = generator.line(x1, y1, x2, y2);
-  }
-  if (type === 'rectangle') {
-    roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1);
-  }
-  if (type === 'circle') {
-    const center = { x: x1, y: y1 };
-    const a = { x: x2, y: y2 };
-    const radius = distance(center, a);
-    roughElement = generator.circle(x1, y1, 2 * radius);
-  }
-  if (type === 'triangle') {
-    roughElement = generator.polygon([
-      [x1, y1],
-      [x2, y2],
-      [x2 + x1, y2 + y1],
-    ]);
-  }
-  return { id, x1, y1, x2, y2, type, roughElement };
-}
-function paintElement(id, x1, y1, x2, y2, type, color) {
-  let roughElement;
-  if (type === 'line') {
-    roughElement = generator.line(x1, y1, x2, y2, { stroke: color });
+    roughElement = generator.line(x1, y1, x2, y2, { roughness: 2 });
   }
   if (type === 'rectangle') {
     roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
-      fill: color
+      roughness: 2,
     });
   }
   if (type === 'circle') {
     const center = { x: x1, y: y1 };
     const a = { x: x2, y: y2 };
     const radius = distance(center, a);
-    roughElement = generator.circle(x1, y1, 2 * radius, { fill: color});
+    roughElement = generator.circle(x1, y1, 2 * radius, { roughness: 2 });
   }
   if (type === 'triangle') {
     roughElement = generator.polygon(
@@ -51,7 +80,42 @@ function paintElement(id, x1, y1, x2, y2, type, color) {
         [x2, y2],
         [x2 + x1, y2 + y1],
       ],
-      { fill: color}
+      { roughness: 2 }
+    );
+  }
+  return { id, x1, y1, x2, y2, type, roughElement };
+}
+function paintElement(id, x1, y1, x2, y2, type, color) {
+  let roughElement;
+  if (type === 'line') {
+    roughElement = generator.line(x1, y1, x2, y2, {
+      roughness: 2,
+      stroke: color,
+    });
+  }
+  if (type === 'rectangle') {
+    roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1, {
+      roughness: 2,
+      fill: color,
+    });
+  }
+  if (type === 'circle') {
+    const center = { x: x1, y: y1 };
+    const a = { x: x2, y: y2 };
+    const radius = distance(center, a);
+    roughElement = generator.circle(x1, y1, 2 * radius, {
+      roughness: 2,
+      fill: color,
+    });
+  }
+  if (type === 'triangle') {
+    roughElement = generator.polygon(
+      [
+        [x1, y1],
+        [x2, y2],
+        [x2 + x1, y2 + y1],
+      ],
+      { roughness: 2, fill: color }
     );
   }
   return { id, x1, y1, x2, y2, type, roughElement };
@@ -87,12 +151,45 @@ const getElementAtPosition = (x, y, elements) => {
   return elements.find((element) => isWithinElement(x, y, element));
 };
 
-const Editor = () => {
-  const [elements, setElements] = useState([]);
+const localElements = localStorage.getItem('elements');
+let localElementsJson = localElements ? JSON.parse(localElements) : [];
+
+const localPartyDetails = localStorage.getItem('partyDetails');
+let localPartyDetailsJson = localElements
+  ? JSON.parse(localPartyDetails)
+  : {
+      name: 'NAME',
+      age: 'age',
+      date: 'date',
+      time: 'time',
+      address: 'address',
+    };
+
+const Editor = ({ userId }) => {
+  const [elements, setElements] = useState(localElementsJson);
+  const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
   const [selectedElement, setSelectedElement] = useState(null);
   const [pointerOffset, setPointerOffset] = useState(null);
+
+  useEffect(() => {
+    const getMyTemplate = async () => {
+      const myTemplate = await getTemplate(userId)
+      const myElements = myTemplate.stickers
+      const myDetails = {
+        name: myTemplate.name,
+        age: myTemplate.age,
+        date: myTemplate.date,
+        time: myTemplate.time,
+        address: myTemplate.address,
+      };
+
+      setElements([...myElements]);
+      setPartyDetails(myDetails);
+    };
+    getMyTemplate();
+  }, [userId]);
 
   useLayoutEffect(() => {
     const canvas = document.getElementById('canvas');
@@ -102,7 +199,16 @@ const Editor = () => {
 
     const roughCanvas = rough.canvas(canvas);
     elements.forEach((element) => roughCanvas.draw(element.roughElement));
-  }, [elements]);
+
+    if (elements) {
+      localStorage.setItem('elements', JSON.stringify(elements));
+    }
+
+    writeDetails(partyDetails, canvas, context);
+    if (partyDetails) {
+      localStorage.setItem('partyDetails', JSON.stringify(partyDetails));
+    }
+  }, [elements, partyDetails]);
 
   const updateElement = (id, x1, y1, x2, y2, type) => {
     const updatedElement = createElement(id, x1, y1, x2, y2, type);
@@ -113,7 +219,7 @@ const Editor = () => {
 
   function handleMouseDown(event) {
     const { clientX, clientY } = event;
-    if (tool === 'selection') {
+    if (tool === 'move') {
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         const offsetX = clientX - element.x1;
@@ -122,29 +228,29 @@ const Editor = () => {
         setPointerOffset({ offsetX, offsetY });
         setAction('moving');
       }
-    }
-    else if (tool === 'paint') {
+    } else if (tool === 'paint') {
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         const { id, x1, y1, x2, y2, type } = element;
-        const color = 'red'
+        const color = 'red';
         const paintedElement = paintElement(id, x1, y1, x2, y2, type, color);
         const elementsCopy = [...elements];
         elementsCopy[id] = paintedElement;
         setElements([...elementsCopy]);
       }
-    }
-    else if (tool === 'eraser') {
-        const element = getElementAtPosition(clientX, clientY, elements);
-        if (element) {
-          const { id } = element;
-          console.log('1', elements)
-          const elementsCopy = [...elements.slice(0, id), ...elements.slice(id + 1)];
-          console.log('2', elementsCopy)
-          setElements([...elementsCopy]);
-        }
+    } else if (tool === 'eraser') {
+      const element = getElementAtPosition(clientX, clientY, elements);
+      if (element) {
+        const { id } = element;
+        console.log('1', elements);
+        const elementsCopy = [
+          ...elements.slice(0, id),
+          ...elements.slice(id + 1),
+        ];
+        console.log('2', elementsCopy);
+        setElements([...elementsCopy]);
       }
-    else {
+    } else {
       const id = elements.length;
       const element = createElement(
         id,
@@ -158,6 +264,7 @@ const Editor = () => {
       setAction('drawing');
     }
   }
+
   function handleMouseMove(event) {
     const { clientX, clientY } = event;
 
@@ -188,10 +295,25 @@ const Editor = () => {
     setAction('none');
     setSelectedElement(null);
   }
+  async function saveCanvas() {
+    const template = {
+      host: userId,
+      stickers: elements,
+      name: partyDetails.name,
+      age: partyDetails.age,
+      date: partyDetails.date,
+      time: partyDetails.time,
+      address: partyDetails.address,
+    };
+    if (template.host) {
+       await postTemplate(userId, template)
+    }
+  }
 
   return (
     <div className='Editor'>
-      <div style={{ position: 'fixed' }}>
+      <div>
+        <TextForm setPartyDetails={setPartyDetails} />
         <input
           type='radio'
           id='eraser'
@@ -208,11 +330,11 @@ const Editor = () => {
         <label htmlFor='paint'>Paint</label>
         <input
           type='radio'
-          id='selection'
-          checked={tool === 'selection'}
-          onChange={() => setTool('selection')}
+          id='move'
+          checked={tool === 'move'}
+          onChange={() => setTool('move')}
         />
-        <label htmlFor='selection'>Selection</label>
+        <label htmlFor='move'>Move</label>
         <input
           type='radio'
           id='line'
@@ -250,6 +372,7 @@ const Editor = () => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       ></canvas>
+      <button onClick={saveCanvas}>Save</button>
     </div>
   );
 };
