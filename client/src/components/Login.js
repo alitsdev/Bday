@@ -15,7 +15,8 @@ const navigate = useNavigate()
 
   return (
     <div>
-      <form id='details-form' onSubmit={onSubmitHandler}>
+    <div id = 'bday'>Bday.</div>
+      <form className='login-form' onSubmit={onSubmitHandler}>
         <label>User Id</label>
         <input type='text' name='userId' placeholder='user Id' />
         <label>Password</label>

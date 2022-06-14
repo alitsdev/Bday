@@ -2,7 +2,11 @@ import { useState, useLayoutEffect, useEffect } from 'react';
 import rough from 'roughjs/bundled/rough.esm.js';
 import { getTemplate, postTemplate } from '../services/server-client';
 import ColorSelector from './color-selector';
+import GuestManager from './guest-manager';
 import TextForm from './text-form';
+import Draggable from 'react-draggable'; // The default
+import {DraggableCore} from 'react-draggable'; // <DraggableCore>
+
 
 const generator = rough.generator();
 
@@ -10,7 +14,7 @@ function writeText(info, style = {}, medium) {
   const { text, x, y } = info;
   const {
     fontSize = 40,
-    fontFamily = 'Comic Sans',
+    fontFamily = 'Annie Use Your Telescope',
     color = 'black',
     textAlign = 'left',
     textBaseline = 'top',
@@ -155,11 +159,15 @@ let localPartyDetailsJson = localElements
 const Editor = ({ userId }) => {
   const [elements, setElements] = useState(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
+  const [guestList, setGuestList] = useState([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
   const [selectedElement, setSelectedElement] = useState(null);
   const [pointerOffset, setPointerOffset] = useState(null);
   const [selectedColor, setSelectedColor] = useState('none');
+  const [colorMenuHidden, setColorMenuHidden] = useState(true);
+  const [textMenuHidden, setTextMenuHidden] = useState(true);
+  const [guestMenuHidden, setGuestMenuHidden] = useState(true);
 
   useEffect(() => {
     const getMyTemplate = async () => {
@@ -178,8 +186,8 @@ const Editor = ({ userId }) => {
         setPartyDetails(myDetails);
       }
     };
-    // if (userId)
-    getMyTemplate();
+
+      getMyTemplate();
   }, [userId]);
 
   useLayoutEffect(() => {
@@ -207,10 +215,17 @@ const Editor = ({ userId }) => {
     elementsCopy[id] = updatedElement;
     setElements([...elementsCopy]);
   };
-
+  function handleChange(toolName) {
+    toolName !== 'paint' ? setColorMenuHidden(true) : setColorMenuHidden(false);
+    toolName !== 'text' ? setTextMenuHidden(true) : setTextMenuHidden(false);
+    toolName !== 'guest' ? setGuestMenuHidden(true) : setGuestMenuHidden(false);
+    setTool(toolName);
+  }
   function handleMouseDown(event) {
     const { clientX, clientY } = event;
     if (tool === 'move') {
+      const defaultColor = 'none';
+      setSelectedColor(defaultColor);
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         const offsetX = clientX - element.x1;
@@ -239,6 +254,8 @@ const Editor = ({ userId }) => {
         setElements([...elementsCopy]);
       }
     } else if (tool === 'eraser') {
+      const defaultColor = 'none';
+      setSelectedColor(defaultColor);
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
         const { id } = element;
@@ -248,7 +265,14 @@ const Editor = ({ userId }) => {
         ];
         setElements([...elementsCopy]);
       }
-    } else {
+    } else if (tool === 'text') {
+      return;
+    } else if (tool === 'guest') {
+        return;
+    }
+     else {
+      const defaultColor = 'none';
+      setSelectedColor(defaultColor);
       const id = elements.length;
       const element = createElement(
         id,
@@ -282,21 +306,13 @@ const Editor = ({ userId }) => {
       const { x1, y1 } = elements[index];
       updateElement(index, x1, y1, clientX, clientY, tool, selectedColor);
     } else if (action === 'moving') {
-      const { id, x1, x2, y1, y2, type } = selectedElement;
+      const { id, x1, x2, y1, y2, type, color } = selectedElement;
       const { offsetX, offsetY } = pointerOffset;
       const width = x2 - x1;
       const height = y2 - y1;
       const newX = clientX - offsetX;
       const newY = clientY - offsetY;
-      updateElement(
-        id,
-        newX,
-        newY,
-        newX + width,
-        newY + height,
-        type,
-        selectedColor
-      );
+      updateElement(id, newX, newY, newX + width, newY + height, type, color);
     }
   }
   function handleMouseUp() {
@@ -305,7 +321,7 @@ const Editor = ({ userId }) => {
   }
   async function saveCanvas() {
     const template = {
-      host: userId,
+      host: 'alicia',
       stickers: elements,
       name: partyDetails.name,
       age: partyDetails.age,
@@ -313,67 +329,117 @@ const Editor = ({ userId }) => {
       time: partyDetails.time,
       address: partyDetails.address,
     };
-    if (template.host) {
-      await postTemplate(userId, template);
-    }
+console.log(template)
+      await postTemplate('alicia', template);
+
   }
 
   return (
     <div className='Editor'>
+      {console.log(colorMenuHidden)}
       <div>
-        <TextForm setPartyDetails={setPartyDetails} />
-        <div>
-          <input
-            type='radio'
-            id='eraser'
-            checked={tool === 'eraser'}
-            onChange={() => setTool('eraser')}
-          />
-          <label htmlFor='eraser'>Eraser</label>
-          <input
-            type='radio'
-            id='paint'
-            checked={tool === 'paint'}
-            onChange={() => setTool('paint')}
-          />
-          <label htmlFor='paint'>Paint</label>
-          <input
-            type='radio'
-            id='move'
-            checked={tool === 'move'}
-            onChange={() => setTool('move')}
-          />
-          <label htmlFor='move'>Move</label>
-          <input
-            type='radio'
-            id='line'
-            checked={tool === 'line'}
-            onChange={() => setTool('line')}
-          />
-          <label htmlFor='line'>Line</label>
-          <input
-            type='radio'
-            id='triangle'
-            checked={tool === 'triangle'}
-            onChange={() => setTool('triangle')}
-          />
-          <label htmlFor='triangle'>Triangle</label>
-          <input
-            type='radio'
-            id='rectangle'
-            checked={tool === 'rectangle'}
-            onChange={() => setTool('rectangle')}
-          />
-          <label htmlFor='rectangle'>Rectangle</label>
-          <input
-            type='radio'
-            id='circle'
-            checked={tool === 'circle'}
-            onChange={() => setTool('circle')}
-          />
-          <label htmlFor='circle'>Circle</label>
+        {!guestMenuHidden && <Draggable><div className = 'text-menu-container'><GuestManager guestList={guestList} setGuestList={setGuestList} /></div></Draggable>}
+        {!textMenuHidden && <Draggable><div className = 'text-menu-container'><TextForm setPartyDetails={setPartyDetails} /></div></Draggable>}
+        <Draggable>
+        <div className='tool-menu-container'>
+          <div className='tool-menu'>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='line'
+                checked={tool === 'line'}
+                onChange={() => handleChange('line')}
+              />
+            <label htmlFor='line'>Line</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='triangle'
+                checked={tool === 'triangle'}
+                onChange={() => handleChange('triangle')}
+              />
+              <label htmlFor='triangle'>Triangle</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='rectangle'
+                checked={tool === 'rectangle'}
+                onChange={() => handleChange('rectangle')}
+              />
+              <label htmlFor='rectangle'>Rectangle</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='circle'
+                checked={tool === 'circle'}
+                onChange={() => handleChange('circle')}
+              />
+              <label htmlFor='circle'>Circle</label>
+            </div>
+
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='paint'
+                checked={tool === 'paint'}
+                onChange={() => handleChange('paint')}
+              />
+              <label htmlFor='paint'>Paint</label>{' '}
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='move'
+                checked={tool === 'move'}
+                onChange={() => handleChange('move')}
+              />
+              <label htmlFor='move'>Move</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='eraser'
+                checked={tool === 'eraser'}
+                onChange={() => handleChange('eraser')}
+              />
+              <label htmlFor='eraser'>Eraser</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='text'
+                checked={tool === 'text'}
+                onChange={() => handleChange('text')}
+              />
+              <label htmlFor='text'>Text</label>
+            </div>
+            <div>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='guest'
+                checked={tool === 'guest'}
+                onChange={() => handleChange('guest')}
+              />
+              <label htmlFor='guest'>Guest-List</label>
+            </div>
+          </div>
         </div>
-        <ColorSelector setSelectedColor={setSelectedColor}></ColorSelector>
+        </Draggable>
+        {!colorMenuHidden && (
+            <Draggable><div className = 'color-menu'><ColorSelector setSelectedColor={setSelectedColor}></ColorSelector></div></Draggable>
+        )}
       </div>
       <canvas
         id='canvas'
@@ -383,7 +449,7 @@ const Editor = ({ userId }) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
       ></canvas>
-      <button onClick={saveCanvas}>Save</button>
+      <button id = 'save-button' onClick={() => saveCanvas()}>Save Invitation</button>
     </div>
   );
 };

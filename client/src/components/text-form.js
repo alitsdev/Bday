@@ -18,7 +18,7 @@ const TextForm = ({setPartyDetails}) => {
       }
 
 return (
-    <div><form id = 'details-form' onSubmit={onSubmitHandler}>
+    <div className="text-menu"><form id = 'details-form' onSubmit={onSubmitHandler}>
     <label>Your Name</label>
     <input type='text' name='name' placeholder='your name' />
     <label>You are turning</label>

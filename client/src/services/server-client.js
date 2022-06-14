@@ -1,13 +1,13 @@
 const BASE_URL = 'http://localhost:3001';
 
-export const getTemplate = (userId) => getRequest(`${userId}/template`);
-export const getGuests = (userId) => getRequest(`${userId}/guests`);
+export const getTemplate = async (userId='alicia') => await getRequest(`${userId}/template`);
+export const getGuests = async (userId) => await getRequest(`${userId}/guests`);
 export const getUser = (userId) => getRequest(`${userId}`);
 
-export const postTemplate = (userId, template) =>
-  postRequest(`${userId}/template`, template);
-export const postGuest = (userId, guest) =>
-  postRequest(`${userId}/guests`, guest);
+export const postTemplate = async (userId, template) =>
+  await postRequest(`${userId}/template`, template);
+export const postGuest = async (userId, guest) =>
+  await postRequest(`${userId}/guests`, guest);
 export const postUser = (newUser) => postGuest('register', newUser);
 
 const getRequest = async (url) => {
