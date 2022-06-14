@@ -1,12 +1,16 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Login = ({setUserId}) => {
+const navigate = useNavigate()
+
    const onSubmitHandler = (event) => {
     event.preventDefault();
     const userId = event.target.userId.value
     if (userId) {
         setUserId(userId)
     }
+    navigate(`/${userId}/template`)
    }
 
   return (
@@ -15,7 +19,7 @@ const Login = ({setUserId}) => {
         <label>User Id</label>
         <input type='text' name='userId' placeholder='user Id' />
         <label>Password</label>
-        <input type='number' name='password' placeholder='password' />
+        <input type='text' name='password' placeholder='password' />
         <button type='submit'>Login</button>
       </form>
     </div>
