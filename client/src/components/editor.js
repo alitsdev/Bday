@@ -4,9 +4,8 @@ import { getTemplate, postTemplate } from '../services/server-client';
 import ColorSelector from './color-selector';
 import GuestManager from './guest-manager';
 import TextForm from './text-form';
-import Draggable from 'react-draggable'; // The default
-import {DraggableCore} from 'react-draggable'; // <DraggableCore>
-
+import Draggable from 'react-draggable';
+import Moment from 'moment';
 
 const generator = rough.generator();
 
@@ -49,9 +48,9 @@ function writeDetails(text, medium, ctx) {
     { text: 'Join us for lots of fun on', x: medium.width / 2, y: 250 },
     { textAlign: 'center' },
     ctx
-  );
-  writeText(
-    { text: `${text.date} at ${text.time}`, x: medium.width / 2, y: 300 },
+    );
+    writeText(
+    { text: `${ Moment(text.date).format('MMM Do')} at ${text.time}`, x: medium.width / 2, y: 300 },
     { textAlign: 'center' },
     ctx
   );
@@ -330,8 +329,8 @@ const Editor = ({ userId }) => {
       address: partyDetails.address,
     };
 console.log(template)
-      await postTemplate('alicia', template);
-
+    const result =  await postTemplate('alicia', template);
+console.log(result)
   }
 
   return (
