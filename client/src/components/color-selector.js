@@ -1,4 +1,5 @@
 import React from 'react';
+import '../Styles/Color-selector.style.css';
 
 const ColorSelector = ({ setSelectedColor }) => {
 
