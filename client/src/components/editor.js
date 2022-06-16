@@ -12,6 +12,7 @@ import {
 	localElementsJson,
 	localPartyDetailsJson,
 } from '../utils/helper_functions';
+import '../Styles/Editor.style.css';
 
 const Editor = ({ userId }) => {
 	const [elements, setElements] = useState(localElementsJson);
