@@ -1,7 +1,8 @@
 import React from 'react';
 
 const ColorSelector = ({ setSelectedColor }) => {
-	const colors = [
+
+  const colors = [
 		{ name: 'red', color: '#ffb3ba' },
 		{ name: 'orange', color: '#ffdfba' },
 		{ name: 'yellow', color: '#ffffba' },
