@@ -1,0 +1,38 @@
+#bday {
+	font-family: 'Annie Use Your Telescope';
+	font-weight: bolder;
+	font-size: 100px;
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.login-form {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	height: 15vh;
+	width: 15vw;
+	border: solid darkgray 1px;
+	z-index: 1;
+	background-color: white;
+	font-family: 'Annie Use Your Telescope';
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	transform: translate(-50%, -50%);
+}
+.login-form form {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+}
+.login-form form input {
+	padding: 10px;
+	border: 1px solid lightgray;
+}
+.login-form button {
+	font-family: 'Annie Use Your Telescope';
+	font-weight: bolder;
+	font-size: large;
+}

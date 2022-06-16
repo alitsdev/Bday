@@ -6,6 +6,7 @@ import {
 	localElementsJson,
 	localPartyDetailsJson,
 } from '../utils/helper_functions';
+import '../Styles/Party-landing-page.style.css';
 
 function writeDetails(text, medium, ctx) {
 	writeText(
