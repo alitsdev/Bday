@@ -5,6 +5,7 @@ import ColorSelector from './color-selector';
 import GuestManager from './guest-manager';
 import TextForm from './text-form';
 import Draggable from 'react-draggable';
+
 import {
 	writeDetails,
 	createElement,
@@ -45,8 +46,10 @@ const Editor = ({ userId }) => {
 			}
 		};
 
+
 		getMyTemplate();
 	}, [userId]);
+
 
 	useLayoutEffect(() => {
 		const canvas = document.getElementById('canvas');
@@ -66,6 +69,7 @@ const Editor = ({ userId }) => {
 			localStorage.setItem('partyDetails', JSON.stringify(partyDetails));
 		}
 	}, [elements, partyDetails]);
+
 
 	const updateElement = (id, x1, y1, x2, y2, type, color) => {
 		const updatedElement = createElement(id, x1, y1, x2, y2, type, color);
@@ -145,6 +149,7 @@ const Editor = ({ userId }) => {
 		}
 	}
 
+
 	function handleMouseMove(event) {
 		const { clientX, clientY } = event;
 
@@ -157,6 +162,7 @@ const Editor = ({ userId }) => {
 				? 'move'
 				: 'default';
 		}
+
 
 		if (action === 'drawing') {
 			const index = elements.length - 1;
@@ -329,5 +335,6 @@ const Editor = ({ userId }) => {
 			</button>
 		</div>
 	);
+   
 };
 export default Editor;
