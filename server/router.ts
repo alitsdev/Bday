@@ -2,8 +2,6 @@ import Express from 'express';
 import Template from './controllers/template-controller';
 import Guest from './controllers/guest-controller';
 import User from './controllers/user-controller';
-// import Guest from './controllers/controller';
-// import User from './controllers/controller';
 
 const router = Express.Router();
 

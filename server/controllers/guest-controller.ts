@@ -20,7 +20,6 @@ const getGuestList = async (req: Request, res: Response) => {
 };
 const postGuest = async (req: Request, res: Response) => {
 	try {
-		console.log(req.body);
 		const guest = req.body;
 		if ((guest.host && guest.name && guest.email) !== '') {
 			const savedGuest = await Guest.create(guest);
