@@ -3,24 +3,24 @@ const BASE_URL = 'http://localhost:3001';
 export const getTemplate = async (userId = 'alicia') => {
   await getRequest(`${userId}/template`);
 };
-export const getGuests = async (userId) => {
+export const getGuests = async (userId: string) => {
   await getRequest(`${userId}/guests`);
 };
-export const getUser = (userId) => {
+export const getUser = (userId: string) => {
   getRequest(`${userId}`);
 };
 
-export const postTemplate = async (userId, template) => {
+export const postTemplate = async (userId: string, template) => {
   await postRequest(`${userId}/template`, template);
 };
-export const postGuest = async (userId, guest) => {
+export const postGuest = async (userId: string, guest) => {
   await postRequest(`${userId}/guests`, guest);
 };
 export const postUser = (newUser) => {
   postGuest('register', newUser);
 };
 
-const getRequest = async (url) => {
+const getRequest = async (url: string) => {
   try {
     const result = await fetch(`${BASE_URL}/${url}`);
     return await result.json();
@@ -29,7 +29,7 @@ const getRequest = async (url) => {
   }
 };
 
-const postRequest = async (url, item) => {
+const postRequest = async (url: string, item) => {
   try {
     const result = await fetch(`${BASE_URL}/${url}`, {
       method: 'POST',
