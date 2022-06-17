@@ -69,13 +69,15 @@ const PartyLandingPage = ({ userId }) => {
     getMyTemplate();
   }, [userId]);
 
+
   useLayoutEffect(() => {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
 
+    context.clearRect(0, 0, canvas.width, canvas.height);
     const roughCanvas = rough.canvas(canvas);
+
 
     elements.forEach((element) => roughCanvas.draw(element.roughElement));
     writeDetails(partyDetails, canvas, context);
