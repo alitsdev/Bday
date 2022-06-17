@@ -1,14 +1,45 @@
-import { useState, useLayoutEffect, useEffect } from 'react';
-import rough from 'roughjs/bundled/rough.esm.js';
-import { getTemplate } from '../services/server-client';
-import {
+import React, { useState, useLayoutEffect, useEffect } from 'react';
+import '../Styles/Party-landing-page.style.css';
+const rough = require('roughjs/bundled/rough.esm.js');
+const { getTemplate } = require('../services/server-client');
+const {
   writeText,
   localElementsJson,
   localPartyDetailsJson,
-} from '../utils/helper_functions';
-import '../Styles/Party-landing-page.style.css';
+} = require('../utils/helper_functions');
 
-function writeDetails(text, medium, ctx) {
+type PartyLandingPageProps = {
+  userId: string;
+};
+type Text = {
+  text: string;
+  x: number;
+  y: number;
+  name: string;
+  age: number;
+  date: Date;
+  time: Date;
+  address: string;
+};
+type Medium = HTMLCanvasElement;
+export type element = {
+  color: string;
+  id: number;
+  type: string;
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  roughElement: {
+    shape: string;
+  };
+};
+
+function writeDetails(
+  text: Text,
+  medium: Medium,
+  ctx: CanvasRenderingContext2D | null
+) {
   writeText(
     { text: `${text.name}`, x: medium.width / 2, y: 100 },
     { textAlign: 'center' },
@@ -41,10 +72,9 @@ function writeDetails(text, medium, ctx) {
   );
 }
 
-const PartyLandingPage = ({ userId }) => {
+const PartyLandingPage: React.FC<PartyLandingPageProps> = ({ userId }) => {
   const [elements, setElements] = useState(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
-
   const [confirmationHidden, setConfirmationHidden] = useState(true);
   const [messageToGuestHidden, setMessageToGuestHidden] = useState(true);
 
@@ -69,17 +99,18 @@ const PartyLandingPage = ({ userId }) => {
     getMyTemplate();
   }, [userId]);
 
-
   useLayoutEffect(() => {
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
-
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    const context = canvas.getContext(
+      '2d'
+    ) as unknown as CanvasRenderingContext2D;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
+
     const roughCanvas = rough.canvas(canvas);
-
-
-    elements.forEach((element) => roughCanvas.draw(element.roughElement));
+    elements.forEach((element: element) =>
+      roughCanvas.draw(element.roughElement)
+    );
     writeDetails(partyDetails, canvas, context);
 
     if (elements) {
@@ -95,7 +126,7 @@ const PartyLandingPage = ({ userId }) => {
   async function confirm() {
     setConfirmationHidden(false);
   }
-  function onSubmitHandler(e) {
+  function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();
     setConfirmationHidden(true);
     setMessageToGuestHidden(false);
