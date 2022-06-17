@@ -1,28 +1,32 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
-import rough from 'roughjs/bundled/rough.esm.js';
-import { getTemplate, postTemplate } from '../services/server-client';
-import ColorSelector from '../components/Color-selector';
-import GuestManager from '../components/Guest-manager';
-import TextForm from '../components/Text-form';
-import Draggable from 'react-draggable';
-
-import {
+import '../Styles/Editor.style.css';
+import { element } from './Party-landing-page';
+const rough = require('roughjs/bundled/rough.esm.js');
+const { getTemplate, postTemplate } = require('../services/server-client');
+const ColorSelector = require('../components/Color-selector');
+const GuestManager = require('../components/Guest-manager');
+const TextForm = require('../componets/Text-form');
+const Draggable = require('react-draggable');
+const {
   writeDetails,
   createElement,
   getElementAtPosition,
   localElementsJson,
   localPartyDetailsJson,
-} from '../utils/helper_functions';
-import '../Styles/Editor.style.css';
+} = require('../utils/helper_functions');
 
-const Editor = ({ userId }) => {
+type EditorProps = {
+  userId: string;
+};
+
+const Editor: React.FC<EditorProps> = ({ userId }) => {
   const [elements, setElements] = useState(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [guestList, setGuestList] = useState([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
   const [selectedElement, setSelectedElement] = useState(null);
-  const [pointerOffset, setPointerOffset] = useState(null);
+  const [pointerOffset, setPointerOffset] = useState({});
   const [selectedColor, setSelectedColor] = useState('none');
   const [colorMenuHidden, setColorMenuHidden] = useState(true);
   const [textMenuHidden, setTextMenuHidden] = useState(true);
@@ -50,13 +54,17 @@ const Editor = ({ userId }) => {
   }, [userId]);
 
   useLayoutEffect(() => {
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    const context = canvas.getContext(
+      '2d'
+    ) as unknown as CanvasRenderingContext2D;
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     const roughCanvas = rough.canvas(canvas);
-    elements.forEach((element) => roughCanvas.draw(element.roughElement));
+    elements.forEach((element: element) =>
+      roughCanvas.draw(element.roughElement)
+    );
 
     if (elements) {
       localStorage.setItem('elements', JSON.stringify(elements));
@@ -68,19 +76,27 @@ const Editor = ({ userId }) => {
     }
   }, [elements, partyDetails]);
 
-  const updateElement = (id, x1, y1, x2, y2, type, color) => {
+  const updateElement = (
+    id: number,
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    type: string,
+    color: string
+  ) => {
     const updatedElement = createElement(id, x1, y1, x2, y2, type, color);
     const elementsCopy = [...elements];
     elementsCopy[id] = updatedElement;
     setElements([...elementsCopy]);
   };
-  function handleChange(toolName) {
+  function handleChange(toolName: string) {
     toolName !== 'paint' ? setColorMenuHidden(true) : setColorMenuHidden(false);
     toolName !== 'text' ? setTextMenuHidden(true) : setTextMenuHidden(false);
     toolName !== 'guest' ? setGuestMenuHidden(true) : setGuestMenuHidden(false);
     setTool(toolName);
   }
-  function handleMouseDown(event) {
+  function handleMouseDown(event: MouseEvent) {
     const { clientX, clientY } = event;
     if (tool === 'move') {
       const defaultColor = 'none';
@@ -146,7 +162,7 @@ const Editor = ({ userId }) => {
     }
   }
 
-  function handleMouseMove(event) {
+  function handleMouseMove(event: MouseEvent) {
     const { clientX, clientY } = event;
 
     if (tool === 'move') {
