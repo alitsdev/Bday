@@ -19,14 +19,29 @@ type EditorProps = {
   userId: string;
 };
 
+type SelectedElement = {
+  id?: number;
+  x1?: number;
+  x2?: number;
+  y1?: number;
+  y2?: number;
+  type?: string;
+  color?: string;
+};
+
+type PointerOffSet = {
+  offsetX?: number;
+  offsetY?: number;
+};
+
 const Editor: React.FC<EditorProps> = ({ userId }) => {
-  const [elements, setElements] = useState(localElementsJson);
+  const [elements, setElements] = useState<element[]>(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [guestList, setGuestList] = useState([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
-  const [selectedElement, setSelectedElement] = useState(null);
-  const [pointerOffset, setPointerOffset] = useState({});
+  const [selectedElement, setSelectedElement] = useState<SelectedElement>({});
+  const [pointerOffset, setPointerOffset] = useState<PointerOffSet>({});
   const [selectedColor, setSelectedColor] = useState('none');
   const [colorMenuHidden, setColorMenuHidden] = useState(true);
   const [textMenuHidden, setTextMenuHidden] = useState(true);
@@ -96,7 +111,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     toolName !== 'guest' ? setGuestMenuHidden(true) : setGuestMenuHidden(false);
     setTool(toolName);
   }
-  function handleMouseDown(event: MouseEvent) {
+  function handleMouseDown(event: React.MouseEvent<Element, MouseEvent>) {
     const { clientX, clientY } = event;
     if (tool === 'move') {
       const defaultColor = 'none';
@@ -161,16 +176,13 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
       setAction('drawing');
     }
   }
-
-  function handleMouseMove(event: MouseEvent) {
+  function handleMouseMove(event: React.MouseEvent<Element, MouseEvent>) {
     const { clientX, clientY } = event;
-
+    const target = event.target as typeof event.target & {
+      style: { cursor: string };
+    };
     if (tool === 'move') {
-      event.target.style.cursor = getElementAtPosition(
-        clientX,
-        clientY,
-        elements
-      )
+      target.style.cursor = getElementAtPosition(clientX, clientY, elements)
         ? 'move'
         : 'default';
     }
@@ -182,16 +194,26 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     } else if (action === 'moving') {
       const { id, x1, x2, y1, y2, type, color } = selectedElement;
       const { offsetX, offsetY } = pointerOffset;
-      const width = x2 - x1;
-      const height = y2 - y1;
-      const newX = clientX - offsetX;
-      const newY = clientY - offsetY;
-      updateElement(id, newX, newY, newX + width, newY + height, type, color);
+      if (id && x1 && x2 && y1 && y2 && type && color && offsetX && offsetY) {
+        const width = x2 - x1;
+        const height = y2 - y1;
+        const newX = clientX - offsetX;
+        const newY = clientY - offsetY;
+        updateElement(
+          id,
+          newX,
+          newY,
+          newX + width,
+          newY + height,
+          type!,
+          color!
+        );
+      }
     }
   }
   function handleMouseUp() {
     setAction('none');
-    setSelectedElement(null);
+    setSelectedElement({});
   }
   async function saveCanvas() {
     const template = {
@@ -210,140 +232,145 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 
   return (
     <div className="Editor">
-      {console.log(colorMenuHidden)}
-      <div>
-        {!guestMenuHidden && (
+      <>
+        {console.log(colorMenuHidden)}
+        <div>
+          {!guestMenuHidden && (
+            <Draggable>
+              <div className="text-menu-container">
+                <GuestManager
+                  guestList={guestList}
+                  setGuestList={setGuestList}
+                />
+              </div>
+            </Draggable>
+          )}
+          {!textMenuHidden && (
+            <Draggable>
+              <div className="text-menu-container">
+                <TextForm setPartyDetails={setPartyDetails} />
+              </div>
+            </Draggable>
+          )}
           <Draggable>
-            <div className="text-menu-container">
-              <GuestManager guestList={guestList} setGuestList={setGuestList} />
-            </div>
-          </Draggable>
-        )}
-        {!textMenuHidden && (
-          <Draggable>
-            <div className="text-menu-container">
-              <TextForm setPartyDetails={setPartyDetails} />
-            </div>
-          </Draggable>
-        )}
-        <Draggable>
-          <div className="tool-menu-container">
-            <div className="tool-menu">
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="line"
-                  checked={tool === 'line'}
-                  onChange={() => handleChange('line')}
-                />
-                <label htmlFor="line">Line</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="triangle"
-                  checked={tool === 'triangle'}
-                  onChange={() => handleChange('triangle')}
-                />
-                <label htmlFor="triangle">Triangle</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="rectangle"
-                  checked={tool === 'rectangle'}
-                  onChange={() => handleChange('rectangle')}
-                />
-                <label htmlFor="rectangle">Rectangle</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="circle"
-                  checked={tool === 'circle'}
-                  onChange={() => handleChange('circle')}
-                />
-                <label htmlFor="circle">Circle</label>
-              </div>
+            <div className="tool-menu-container">
+              <div className="tool-menu">
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="line"
+                    checked={tool === 'line'}
+                    onChange={() => handleChange('line')}
+                  />
+                  <label htmlFor="line">Line</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="triangle"
+                    checked={tool === 'triangle'}
+                    onChange={() => handleChange('triangle')}
+                  />
+                  <label htmlFor="triangle">Triangle</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="rectangle"
+                    checked={tool === 'rectangle'}
+                    onChange={() => handleChange('rectangle')}
+                  />
+                  <label htmlFor="rectangle">Rectangle</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="circle"
+                    checked={tool === 'circle'}
+                    onChange={() => handleChange('circle')}
+                  />
+                  <label htmlFor="circle">Circle</label>
+                </div>
 
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="paint"
-                  checked={tool === 'paint'}
-                  onChange={() => handleChange('paint')}
-                />
-                <label htmlFor="paint">Paint</label>{' '}
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="paint"
+                    checked={tool === 'paint'}
+                    onChange={() => handleChange('paint')}
+                  />
+                  <label htmlFor="paint">Paint</label>{' '}
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="move"
+                    checked={tool === 'move'}
+                    onChange={() => handleChange('move')}
+                  />
+                  <label htmlFor="move">Move</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="eraser"
+                    checked={tool === 'eraser'}
+                    onChange={() => handleChange('eraser')}
+                  />
+                  <label htmlFor="eraser">Eraser</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="text"
+                    checked={tool === 'text'}
+                    onChange={() => handleChange('text')}
+                  />
+                  <label htmlFor="text">Text</label>
+                </div>
+                <div>
+                  <input
+                    className="check-input"
+                    type="checkbox"
+                    id="guest"
+                    checked={tool === 'guest'}
+                    onChange={() => handleChange('guest')}
+                  />
+                  <label htmlFor="guest">Guest-List</label>
+                </div>
               </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="move"
-                  checked={tool === 'move'}
-                  onChange={() => handleChange('move')}
-                />
-                <label htmlFor="move">Move</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="eraser"
-                  checked={tool === 'eraser'}
-                  onChange={() => handleChange('eraser')}
-                />
-                <label htmlFor="eraser">Eraser</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="text"
-                  checked={tool === 'text'}
-                  onChange={() => handleChange('text')}
-                />
-                <label htmlFor="text">Text</label>
-              </div>
-              <div>
-                <input
-                  className="check-input"
-                  type="checkbox"
-                  id="guest"
-                  checked={tool === 'guest'}
-                  onChange={() => handleChange('guest')}
-                />
-                <label htmlFor="guest">Guest-List</label>
-              </div>
-            </div>
-          </div>
-        </Draggable>
-        {!colorMenuHidden && (
-          <Draggable>
-            <div className="color-menu">
-              <ColorSelector
-                setSelectedColor={setSelectedColor}
-              ></ColorSelector>
             </div>
           </Draggable>
-        )}
-      </div>
-      <canvas
-        id="canvas"
-        width={window.innerWidth}
-        height={window.innerHeight}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      ></canvas>
-      <button id="save-button" onClick={() => saveCanvas()}>
-        Save Invitation
-      </button>
+          {!colorMenuHidden && (
+            <Draggable>
+              <div className="color-menu">
+                <ColorSelector
+                  setSelectedColor={setSelectedColor}
+                ></ColorSelector>
+              </div>
+            </Draggable>
+          )}
+        </div>
+        <canvas
+          id="canvas"
+          width={window.innerWidth}
+          height={window.innerHeight}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        ></canvas>
+        <button id="save-button" onClick={() => saveCanvas()}>
+          Save Invitation
+        </button>
+      </>
     </div>
   );
 };
