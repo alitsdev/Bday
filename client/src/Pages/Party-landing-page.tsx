@@ -1,9 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import '../Styles/Party-landing-page.style.css';
-// const rough = require('roughjs/bundled/rough.esm.js');
-// const rough = require('../node_modules/roughjs/dist/rough.umd');
-import rough from 'roughjs';
-// const rough = require('roughjs');
+const rough = require('roughjs/bundled/rough.esm.js');
+
 const { getTemplate } = require('../services/server-client');
 const {
 	writeText,

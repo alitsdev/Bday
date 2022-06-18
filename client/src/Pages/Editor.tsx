@@ -1,9 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import '../Styles/Editor.style.css';
 import { element } from './Party-landing-page';
-// const rough = require('roughjs');
-// import rough from 'roughjs';
-const rough = require('roughjs/bundled/rough.esm');
+const rough = require('roughjs/bundled/rough.esm.js');
 const { getTemplate, postTemplate } = require('../services/server-client');
 const ColorSelector = require('../components/Color-selector');
 const GuestManager = require('../components/Guest-manager');
