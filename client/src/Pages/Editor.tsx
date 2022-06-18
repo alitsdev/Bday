@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import '../Styles/Editor.style.css';
 import { element } from './Party-landing-page';
-const rough = require('roughjs/bundled/rough.esm.js');
+const rough = require('roughjs');
 const { getTemplate, postTemplate } = require('../services/server-client');
 const ColorSelector = require('../components/Color-selector');
 const GuestManager = require('../components/Guest-manager');
@@ -49,7 +49,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 
 	useEffect(() => {
 		const getMyTemplate = async () => {
-			const myTemplate = await getTemplate('alicia');
+			const myTemplate = await getTemplate('11');
 			if (myTemplate) {
 				const myElements = myTemplate.stickers;
 				const myDetails = {
