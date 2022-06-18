@@ -12,9 +12,9 @@ type template = {
 type guest = {
 	name: string;
 	mail: string;
-	host: string;
-	invitationSent: boolean;
-	confirmerd: boolean;
+	host?: string;
+	invitationSent?: boolean;
+	confirmed?: boolean;
 };
 type user = {
 	userId: string;
@@ -34,13 +34,13 @@ export const getUser = (userId: string) => {
 };
 
 export const postTemplate = async (userId: string, template: template) => {
-	await postRequest(`${userId}/template`, template);
+	return await postRequest(`${userId}/template`, template);
 };
 export const postGuest = async (userId: string, guest: guest) => {
-	await postRequest(`${userId}/guests`, guest);
+	return await postRequest(`${userId}/guests`, guest);
 };
 export const postUser = (newUser: user) => {
-	postRequest('register', newUser);
+	return postRequest('register', newUser);
 };
 
 const getRequest = async (url: string) => {
