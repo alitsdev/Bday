@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import '../Styles/Party-landing-page.style.css';
-// const rough = require('roughjs/bundled/rough.esm.js');
-const rough = require('../node_modules/roughjs/dist/rough.umd');
+const rough = require('roughjs/bundled/rough.esm.js');
+
 const { getTemplate } = require('../services/server-client');
 const {
 	writeText,
@@ -83,7 +83,7 @@ const PartyLandingPage: React.FC<PartyLandingPageProps> = ({ userId }) => {
 
 	useEffect(() => {
 		const getMyTemplate = async () => {
-			const myTemplate = await getTemplate('alicia');
+			const myTemplate = await getTemplate('11');
 			if (myTemplate) {
 				const myElements = myTemplate.stickers;
 				const myDetails = {
