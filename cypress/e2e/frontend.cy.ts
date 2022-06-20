@@ -1,10 +1,10 @@
 describe('homepage', () => {
 	it('passes', () => {
 		cy.visit('http://localhost:3000');
-		cy.get('[name="userId"]').type('hello');
+		cy.get('[name="userId"]').type('11');
 		cy.get('[name="password"]').type('hello');
 		cy.get('button').click();
-		cy.url().should('include', '/hello/template');
+		cy.url().should('include', '/11/template');
 	});
 });
 
@@ -128,6 +128,24 @@ describe('draw, paint and delete shapes', () => {
 			cy.get('.text-menu-container');
 			cy.get('[type="text"]').type('Xavi');
 			cy.get('[type="email"]').type('hola@gmail.com');
+			cy.get('#details-form > button').click();
 		});
+	});
+});
+
+describe('email and paths', () => {
+	it('check email and confirm invitation', () => {
+		cy.visit(
+			'https://ethereal.email/message/YrCm1p1qjBpygKNgYrCq36sJpVRbml2nAAAACWkevnOujfLx-7ylbbC1wWE'
+		);
+		cy.wait(1000);
+	});
+	it('check email and confirm invitation', () => {
+		cy.visit('http://localhost:3000/11/invitation');
+		cy.url().should('include', '/invitation');
+		cy.get('#save-button').click();
+		cy.get('[type="text"]').type('Xavi');
+		cy.get('[type="email"]').type('hola@gmail.com');
+		cy.get('#details-form > button').click();
 	});
 });
