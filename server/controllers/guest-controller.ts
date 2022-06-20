@@ -8,6 +8,7 @@ async function main() {
 	// Only needed if you don't have a real mail account for testing
 }
 
+//jmm
 const getGuestList = async (req: Request, res: Response) => {
 	try {
 		const hostId = req.params.userId;
