@@ -10,6 +10,7 @@ const getTemplate = async (req: Request, res: Response) => {
     res.send(template);
   } catch (error) {
     res.status(500);
+    console.log(error);
     res.end();
   }
 };
@@ -34,6 +35,7 @@ const postTemplate = async (req: Request, res: Response) => {
     }
   } catch (error) {
     res.status(500);
+    console.log(error);
     res.end();
   }
 };
