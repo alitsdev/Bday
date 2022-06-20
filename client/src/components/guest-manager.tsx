@@ -33,6 +33,8 @@ const GuestManager: React.FC<GuestManagerProps> = ({
 		setGuestList([...guestList, savedGuest]);
 	}
 
+	//Hola Joan Marc
+
 	return (
 		<div className="text-menu">
 			<form id="details-form" onSubmit={onSubmitHandler}>
