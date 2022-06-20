@@ -225,7 +225,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 			address: partyDetails.address,
 		};
 		console.log(template);
-		const result = await postTemplate('alicia', template);
+		const result = await postTemplate('hola', template);
 		console.log(result);
 	}
 
