@@ -224,15 +224,13 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
       time: partyDetails.time,
       address: partyDetails.address,
     };
-    console.log(template);
     const result = await postTemplate('hola', template);
-    console.log(result);
   }
 
   return (
     <div className="Editor">
       <>
-        {console.log(colorMenuHidden)}
+        {/* {console.log(colorMenuHidden)} */}
         <div>
           {!guestMenuHidden && (
             <Draggable>
