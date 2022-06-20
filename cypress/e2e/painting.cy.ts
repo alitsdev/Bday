@@ -14,4 +14,8 @@ describe('homepage', () => {
 		cy.get(':nth-child(8) > label').click();
 		cy.get(':nth-child(9) > label').click();
 	});
+
+	it('passes', () => {
+		cy.get(':nth-child(1) > label').click();
+	});
 });
