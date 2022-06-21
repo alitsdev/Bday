@@ -36,3 +36,9 @@
 	font-weight: bolder;
 	font-size: large;
 }
+
+.googleBtn {
+	position: absolute;
+	top: 65%;
+	left: 41.5%;
+}
