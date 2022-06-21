@@ -16,6 +16,7 @@ const getGuestList = async (req: Request, res: Response) => {
     res.send(guests);
   } catch (error) {
     res.status(500);
+    console.log(error);
     res.end();
   }
 };

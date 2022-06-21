@@ -31,7 +31,7 @@ export type element = {
   x2: number;
   y1: number;
   y2: number;
-  roughElement: {
+  roughElement?: {
     shape: string;
     options: any;
     sets: any;

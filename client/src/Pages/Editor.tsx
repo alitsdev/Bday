@@ -48,7 +48,8 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 
   useEffect(() => {
     const getMyTemplate = async () => {
-      const myTemplate = await getTemplate('11');
+      const myTemplate = await getTemplate('alicia');
+      console.log(myTemplate, 'my Template');
       if (myTemplate) {
         const myElements = myTemplate.stickers;
         const myDetails = {
@@ -224,15 +225,13 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
       time: partyDetails.time,
       address: partyDetails.address,
     };
-    console.log(template);
     const result = await postTemplate('hola', template);
-    console.log(result);
   }
 
   return (
     <div className="Editor">
       <>
-        {console.log(colorMenuHidden)}
+        {/* {console.log(colorMenuHidden)} */}
         <div>
           {!guestMenuHidden && (
             <Draggable>

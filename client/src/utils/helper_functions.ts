@@ -115,7 +115,6 @@ export const createElement = function (
           });
   }
   if (type === 'rectangle') {
-    console.log('color', color);
     roughElement =
       color === 'none'
         ? generator.rectangle(x1, y1, x2 - x1, y2 - y1)
@@ -140,14 +139,13 @@ export const createElement = function (
         ? generator.polygon([
             [x1, y1],
             [x2, y2],
-            [x2 + x1, y2 + y1],
+            [(x2 + x1) / 2, 2 * (y1 - y2)],
           ])
         : generator.polygon(
-            [
-              [x1, y1],
-              [x2, y2],
-              [x2 + x1, y2 + y1],
-            ],
+            [(x2 + x1) / 2, +y2],
+            [x1, y1],
+            [x2, y2],
+
             { fill: color }
           );
   }
