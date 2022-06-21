@@ -14,20 +14,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-const provider = new GoogleAuthProvider();
+// const provider = new GoogleAuthProvider();
 
-export const signInWithGoogle = () => {
-	signInWithPopup(auth, provider)
-		.then((result) => {
-			const userId = result.user.displayName;
-			const email = result.user.email;
-			const profilePic = result.user.photoURL;
+// export const signInWithGoogle = () => {
+// 	signInWithPopup(auth, provider)
+// 		.then((result) => {
+// 			const userId = result.user.displayName;
+// 			const email = result.user.email;
+// 			const profilePic = result.user.photoURL;
 
-			localStorage.setItem('name', userId as unknown as string);
-			localStorage.setItem('email', email as unknown as string);
-			localStorage.setItem('profilePic', profilePic as unknown as string);
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-};
+// 			localStorage.setItem('name', userId as unknown as string);
+// 			localStorage.setItem('email', email as unknown as string);
+// 			localStorage.setItem('profilePic', profilePic as unknown as string);
+// 		})
+// 		.catch((error) => {
+// 			console.log(error);
+// 		});
+// };
