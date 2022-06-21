@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/Login.style.css';
-import { signInWithGoogle } from '../services/firebase';
 import GoogleButton from 'react-google-button';
+import { auth } from '../services/firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 type LoginProps = {
 	setUserId: React.Dispatch<React.SetStateAction<string>>;
@@ -25,6 +26,19 @@ const Login: React.FC<LoginProps> = ({ setUserId }) => {
 		navigate(`/${userId}/template`);
 	};
 
+	const signInWithGoogle = () => {
+		const provider = new GoogleAuthProvider();
+		signInWithPopup(auth, provider)
+			.then((result) => {
+				const userId = result.user.displayName;
+				navigate(`/${userId}/template`);
+				console.log(result);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	return (
 		<div>
 			<div id="bday">Bday.</div>
@@ -35,7 +49,6 @@ const Login: React.FC<LoginProps> = ({ setUserId }) => {
 				<input type="text" name="password" placeholder="password" />
 				<button type="submit">Login</button>
 			</form>
-
 			<GoogleButton className="googleBtn" onClick={signInWithGoogle} />
 		</div>
 	);
