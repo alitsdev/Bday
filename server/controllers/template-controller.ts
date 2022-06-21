@@ -4,9 +4,11 @@ import Template from '../model/template';
 
 const getTemplate = async (req: Request, res: Response) => {
   try {
-    const hostId = req.params.userId;
+    console.log(req.body, 'body');
+    console.log(req.params.userId, 'userid');
+    const hostId = `${req.params.userId}`;
     const template = await Template.findOne({ host: hostId });
-    console.log(template);
+    // console.log(template);
     res.send(template);
   } catch (error) {
     res.status(500);
