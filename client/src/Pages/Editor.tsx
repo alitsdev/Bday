@@ -7,7 +7,8 @@ import ColorSelector from '../components/Color-selector';
 import TextForm from '../components/Text-form';
 import GuestManager from '../components/Guest-manager';
 import Draggable from 'react-draggable';
-const { getTemplate, postTemplate } = require('../services/server-client');
+import { getTemplate, postTemplate } from '../services/server-client';
+import { template } from '../services/server-client';
 const {
   writeDetails,
   createElement,
@@ -216,7 +217,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     setSelectedElement({});
   }
   async function saveCanvas() {
-    const template = {
+    const template: template = {
       host: 'alicia',
       stickers: elements,
       name: partyDetails.name,
