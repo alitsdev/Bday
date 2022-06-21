@@ -48,7 +48,8 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 
   useEffect(() => {
     const getMyTemplate = async () => {
-      const myTemplate = await getTemplate('11');
+      const myTemplate = await getTemplate('alicia');
+      console.log(myTemplate, 'my Template');
       if (myTemplate) {
         const myElements = myTemplate.stickers;
         const myDetails = {
