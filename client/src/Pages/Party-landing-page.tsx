@@ -23,9 +23,9 @@ type Text = {
   address: string;
 };
 type Medium = HTMLCanvasElement;
-export type element = {
+type element = {
   color: string;
-  id: number;
+  id: string;
   type: string;
   x1: number;
   x2: number;
