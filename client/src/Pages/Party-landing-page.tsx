@@ -11,6 +11,7 @@ const {
 
 type PartyLandingPageProps = {
   userId: string;
+  userMail: string;
 };
 type Text = {
   text: string;
@@ -75,7 +76,10 @@ function writeDetails(
   );
 }
 
-const PartyLandingPage: React.FC<PartyLandingPageProps> = ({ userId }) => {
+const PartyLandingPage: React.FC<PartyLandingPageProps> = ({
+  userId,
+  userMail,
+}) => {
   const [elements, setElements] = useState(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [confirmationHidden, setConfirmationHidden] = useState(true);

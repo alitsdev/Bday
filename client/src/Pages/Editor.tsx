@@ -19,6 +19,7 @@ import {
 
 type EditorProps = {
   userId: string;
+  userMail: string;
 };
 type SelectedElement = {
   id?: string;
@@ -35,12 +36,12 @@ type PointerOffSet = {
   offsetY?: number;
 };
 
-const Editor: React.FC<EditorProps> = ({ userId }) => {
+const Editor: React.FC<EditorProps> = ({ userId, userMail }) => {
   const [elements, setElements] = useState<element[]>(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [guestList, setGuestList] = useState<guest[]>([]);
   const [action, setAction] = useState('none');
-  const [tool, setTool] = useState('line');
+  const [tool, setTool] = useState('');
   const [selectedElement, setSelectedElement] = useState<SelectedElement>({});
   const [pointerOffset, setPointerOffset] = useState<PointerOffSet>({});
   const [selectedColor, setSelectedColor] = useState('none');
@@ -50,7 +51,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
 
   useEffect(() => {
     const getMyTemplate = async () => {
-      const myTemplate = await getTemplate('alicia');
+      const myTemplate = await getTemplate(userId);
       console.log(myTemplate, 'my Template');
       if (myTemplate) {
         const myElements = myTemplate.stickers;
