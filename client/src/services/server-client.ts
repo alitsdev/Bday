@@ -1,8 +1,8 @@
 const BASE_URL = 'http://localhost:3001';
 
-type template = {
+export type template = {
   host: string;
-  strickers: any[];
+  stickers: any[];
   name: string;
   age: number;
   date: Date;

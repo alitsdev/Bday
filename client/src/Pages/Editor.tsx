@@ -1,32 +1,34 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import '../Styles/Editor.style.css';
-import { element } from './Party-landing-page';
+import { element } from '../utils/helper_functions';
 import { guest } from '../components/Guest-manager';
 import rough from 'roughjs/bundled/rough.esm.js';
 import ColorSelector from '../components/Color-selector';
 import TextForm from '../components/Text-form';
 import GuestManager from '../components/Guest-manager';
 import Draggable from 'react-draggable';
-const { getTemplate, postTemplate } = require('../services/server-client');
-const {
+import { getTemplate, postTemplate } from '../services/server-client';
+import { template } from '../services/server-client';
+import {
   writeDetails,
   createElement,
   getElementAtPosition,
   localElementsJson,
   localPartyDetailsJson,
-} = require('../utils/helper_functions');
+} from '../utils/helper_functions';
 
 type EditorProps = {
   userId: string;
 };
 type SelectedElement = {
-  id?: number;
+  id?: string;
   x1?: number;
-  x2?: number;
   y1?: number;
+  x2?: number;
   y2?: number;
   type?: string;
   color?: string;
+  roughElement?: any;
 };
 type PointerOffSet = {
   offsetX?: number;
@@ -92,7 +94,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
   }, [elements, partyDetails]);
 
   const updateElement = (
-    id: number,
+    id: string,
     x1: number,
     y1: number,
     x2: number,
@@ -100,9 +102,17 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     type: string,
     color: string
   ) => {
-    const updatedElement = createElement(id, x1, y1, x2, y2, type, color);
+    const updatedElement: element = createElement(
+      id,
+      x1,
+      y1,
+      x2,
+      y2,
+      type,
+      color
+    );
     const elementsCopy = [...elements];
-    elementsCopy[id] = updatedElement;
+    elementsCopy[id as unknown as number] = updatedElement;
     setElements([...elementsCopy]);
   };
   function handleChange(toolName: string) {
@@ -140,7 +150,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
           selectedColor
         );
         const elementsCopy = [...elements];
-        elementsCopy[id] = paintedElement;
+        elementsCopy[id as unknown as number] = paintedElement;
         setElements([...elementsCopy]);
       }
     } else if (tool === 'eraser') {
@@ -150,8 +160,8 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
       if (element) {
         const { id } = element;
         const elementsCopy = [
-          ...elements.slice(0, id),
-          ...elements.slice(id + 1),
+          ...elements.slice(0, id as unknown as number),
+          ...elements.slice((id as unknown as number) + 1),
         ];
         setElements([...elementsCopy]);
       }
@@ -164,7 +174,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
       setSelectedColor(defaultColor);
       const id = elements.length;
       const element = createElement(
-        id,
+        id as unknown as string,
         clientX,
         clientY,
         clientX,
@@ -188,9 +198,17 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     }
 
     if (action === 'drawing') {
-      const index = elements.length - 1;
+      const index: number = elements.length - 1;
       const { x1, y1 } = elements[index];
-      updateElement(index, x1, y1, clientX, clientY, tool, selectedColor);
+      updateElement(
+        index as unknown as string,
+        x1,
+        y1,
+        clientX,
+        clientY,
+        tool,
+        selectedColor
+      );
     } else if (action === 'moving') {
       const { id, x1, x2, y1, y2, type, color } = selectedElement;
       const { offsetX, offsetY } = pointerOffset;
@@ -200,7 +218,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
         const newX = clientX - offsetX;
         const newY = clientY - offsetY;
         updateElement(
-          id,
+          id as unknown as string,
           newX,
           newY,
           newX + width,
@@ -216,7 +234,7 @@ const Editor: React.FC<EditorProps> = ({ userId }) => {
     setSelectedElement({});
   }
   async function saveCanvas() {
-    const template = {
+    const template: template = {
       host: 'alicia',
       stickers: elements,
       name: partyDetails.name,

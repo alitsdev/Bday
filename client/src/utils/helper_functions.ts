@@ -22,14 +22,16 @@ type text = {
   time: Date;
   address: string;
 };
-type element = {
-  type: string;
+export type element = {
+  id: string;
   x1: number;
-  x2: number;
   y1: number;
+  x2: number;
   y2: number;
+  type: string;
+  color: string;
+  roughElement: any;
 };
-console.log(rough, 'generator');
 const generator = rough.generator();
 
 export const writeText = function (
