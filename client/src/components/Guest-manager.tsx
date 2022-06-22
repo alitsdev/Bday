@@ -5,6 +5,7 @@ import { postGuest } from '../services/server-client';
 type GuestManagerProps = {
   guestList: guest[];
   setGuestList: React.Dispatch<React.SetStateAction<guest[]>>;
+  userMail: string;
 };
 export type guest = {
   name: string;
@@ -17,6 +18,7 @@ export type guest = {
 const GuestManager: React.FC<GuestManagerProps> = ({
   guestList,
   setGuestList,
+  userMail,
 }) => {
   async function onSubmitHandler(e: React.FormEvent) {
     e.preventDefault();

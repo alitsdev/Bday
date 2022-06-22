@@ -97,7 +97,6 @@ const PartyLandingPage: React.FC<PartyLandingPageProps> = ({
           time: myTemplate.time,
           address: myTemplate.address,
         };
-
         setElements([...myElements]);
         setPartyDetails(myDetails);
       }
@@ -111,19 +110,15 @@ const PartyLandingPage: React.FC<PartyLandingPageProps> = ({
     const context = canvas.getContext(
       '2d'
     ) as unknown as CanvasRenderingContext2D;
-
     context.clearRect(0, 0, canvas.width, canvas.height);
-
     const roughCanvas = rough.canvas(canvas);
     elements.forEach((element: element) =>
       roughCanvas.draw(element.roughElement)
     );
     writeDetails(partyDetails, canvas, context);
-
     if (elements) {
       localStorage.setItem('elements', JSON.stringify(elements));
     }
-
     writeDetails(partyDetails, canvas, context);
     if (partyDetails) {
       localStorage.setItem('partyDetails', JSON.stringify(partyDetails));

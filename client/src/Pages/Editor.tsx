@@ -20,6 +20,7 @@ import {
 type EditorProps = {
   userId: string;
   userMail: string;
+  userName: string;
 };
 type SelectedElement = {
   id?: string;
@@ -36,7 +37,7 @@ type PointerOffSet = {
   offsetY?: number;
 };
 
-const Editor: React.FC<EditorProps> = ({ userId, userMail }) => {
+const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
   const [elements, setElements] = useState<element[]>(localElementsJson);
   const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
   const [guestList, setGuestList] = useState<guest[]>([]);
@@ -236,13 +237,14 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail }) => {
   }
   async function saveCanvas() {
     const template: template = {
-      host: 'alicia',
+      host: userName,
       stickers: elements,
       name: partyDetails.name,
       age: partyDetails.age,
       date: partyDetails.date,
       time: partyDetails.time,
       address: partyDetails.address,
+      email: userMail,
     };
     const result = await postTemplate('hola', template);
   }
@@ -258,6 +260,7 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail }) => {
                 <GuestManager
                   guestList={guestList}
                   setGuestList={setGuestList}
+                  userMail={userMail}
                 />
               </div>
             </Draggable>
