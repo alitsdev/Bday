@@ -4,30 +4,38 @@ import '../Styles/Login.style.css';
 import GoogleButton from 'react-google-button';
 import { auth } from '../services/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { postUser } from '../services/server-client';
 
 type LoginProps = {
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   setUserMail: React.Dispatch<React.SetStateAction<string>>;
   setUserName: React.Dispatch<React.SetStateAction<string>>;
+  userId: string;
+  userMail: string;
+  userName: string;
 };
 
 const Login: React.FC<LoginProps> = ({
   setUserId,
   setUserMail,
   setUserName,
+  userName,
+  userMail,
+  userId,
 }) => {
   const navigate = useNavigate();
 
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();
-
     const target = event.target as typeof event.target & {
       userId: { value: string };
     };
     const userId: string = target.userId.value;
+
     if (userId) {
       setUserId(userId);
     }
+
     navigate(`/${userId}/template`);
   };
 
@@ -49,6 +57,14 @@ const Login: React.FC<LoginProps> = ({
         navigate(`/${googleUserId}/template`);
         console.log(result);
         //TODO - postUser with details added from the google login ( result.user.)
+
+        // const newUser = {
+        //   userId: userId,
+        //   name: userName,
+        //   email: userMail,
+        //   password: userPassword,
+        // };
+        // postUser(newUser);
       })
       .catch((err) => {
         console.log(err);

@@ -25,6 +25,9 @@ const App = () => {
               setUserId={setUserId}
               setUserMail={setUserMail}
               setUserName={setUserName}
+              userId={userId}
+              userMail={userMail}
+              userName={userName}
             />
           }
         />
