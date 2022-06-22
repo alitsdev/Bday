@@ -11,35 +11,37 @@ type UserMail = string;
 type UserName = string;
 
 const App = () => {
-	const [userId, setUserId] = React.useState<UserId>('');
-	const [userMail, setUserMail] = React.useState<UserMail>('');
-	const [userName, setUserName] = React.useState<UserName>('');
+  const [userId, setUserId] = React.useState<UserId>('');
+  const [userMail, setUserMail] = React.useState<UserMail>('');
+  const [userName, setUserName] = React.useState<UserName>('');
 
-	return (
-		<Router>
-			<Routes>
-				<Route
-					path="/"
-					element={
-						<Login
-							setUserId={setUserId}
-							setUserMail={setUserMail}
-							setUserName={setUserName}
-						/>
-					}
-				/>
-				<Route
-					path={`/:${userId}/template`}
-					element={<Editor userId={userId} userMail={userMail} />}
-				/>
-				<Route
-					path={`/:${userId}/invitation`}
-					element={<PartyLandingPage userId={userId} userMail={userMail} />}
-				/>
-				<Route path={'/learned'} element={<Learned />} />
-			</Routes>
-		</Router>
-	);
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Login
+              setUserId={setUserId}
+              setUserMail={setUserMail}
+              setUserName={setUserName}
+            />
+          }
+        />
+        <Route
+          path={`/:${userId}/template`}
+          element={
+            <Editor userId={userId} userMail={userMail} userName={userName} />
+          }
+        />
+        <Route
+          path={`/:${userId}/invitation`}
+          element={<PartyLandingPage userId={userId} userMail={userMail} />}
+        />
+        <Route path={'/learned'} element={<Learned />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;

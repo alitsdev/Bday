@@ -8,6 +8,7 @@ export type template = {
   date: Date;
   time: string;
   address: string;
+  email?: string;
 };
 type guest = {
   name: string;
