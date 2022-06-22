@@ -39,6 +39,17 @@ const Login: React.FC<LoginProps> = ({
 		navigate(`/${userId}/template`);
 	};
 
+	const checkExistingUser = async (id: string, name: string, mail: string) => {
+		if (id && name && mail !== null) {
+			const result = await getUser(id);
+			if (result) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	};
+
 	const signInWithGoogle = () => {
 		const provider = new GoogleAuthProvider();
 		signInWithPopup(auth, provider)
@@ -58,14 +69,12 @@ const Login: React.FC<LoginProps> = ({
 					newUser.userId = googleUserId;
 					newUser.name = googleUserName;
 					newUser.email = googleUserMail;
-				}
-				if (googleUserId && googleUserName && googleUserMail !== null) {
-					const result = getUser(googleUserId);
-					console.log(result, 'result');
+
+					checkExistingUser(googleUserId, googleUserName, googleUserMail);
 
 					postUser(newUser);
-					navigate(`/${googleUserId}/template`);
 				}
+				navigate(`/${googleUserId}/template`);
 				console.log(result);
 			})
 			.catch((err) => {
