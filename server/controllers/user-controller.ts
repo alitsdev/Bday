@@ -15,7 +15,8 @@ const getUser = async (req: Request, res: Response) => {
 const postUser = async (req: Request, res: Response) => {
 	try {
 		const user = req.body;
-		if ((user.userId && user.email) !== '') {
+		const checkingUser = await User.findOne({ userId: user.userId });
+		if ((user.userId && user.email) !== '' && !checkingUser) {
 			const savedUser = await User.create(user);
 			res.status(201);
 			res.send(savedUser);

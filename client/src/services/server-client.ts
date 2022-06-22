@@ -49,7 +49,6 @@ const getRequest = async (url: string) => {
 	try {
 		const result = await fetch(`${BASE_URL}/${url}`);
 		const json = await result.json();
-		console.log(json, 'json');
 		return json;
 	} catch (error) {
 		console.log(error);
