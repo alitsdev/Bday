@@ -87,7 +87,7 @@ const PartyLandingPage: React.FC<PartyLandingPageProps> = ({
 
   useEffect(() => {
     const getMyTemplate = async () => {
-      const myTemplate = await getTemplate('11');
+      const myTemplate = await getTemplate(userId);
       if (myTemplate) {
         const myElements = myTemplate.stickers;
         const myDetails = {

@@ -19,7 +19,7 @@ type text = {
   name: string;
   age: number;
   date: Date;
-  time: Date;
+  time: string;
   address: string;
 };
 export type element = {

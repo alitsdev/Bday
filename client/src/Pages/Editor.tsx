@@ -14,7 +14,6 @@ import {
   createElement,
   getElementAtPosition,
   localElementsJson,
-  localPartyDetailsJson,
 } from '../utils/helper_functions';
 
 type EditorProps = {
@@ -39,7 +38,16 @@ type PointerOffSet = {
 
 const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
   const [elements, setElements] = useState<element[]>(localElementsJson);
-  const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
+  const [partyDetails, setPartyDetails] = useState({
+    // host: '',
+    // stickers: [],
+    name: '',
+    age: 0,
+    date: new Date(Date.now()),
+    time: '',
+    address: '',
+    // email: '',
+  });
   const [guestList, setGuestList] = useState<guest[]>([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('');
@@ -51,11 +59,13 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
   const [guestMenuHidden, setGuestMenuHidden] = useState(true);
 
   useEffect(() => {
+    console.log(partyDetails, 'aprtydetails');
     const getMyTemplate = async () => {
       const myTemplate = await getTemplate(userId);
       console.log(userId, 'userId');
       console.log(myTemplate, 'my Template');
       if (myTemplate) {
+        console.log('inside the if');
         const myElements = myTemplate.stickers;
         const myDetails = {
           name: myTemplate.name,
@@ -67,6 +77,18 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
         setElements([...myElements]);
         setPartyDetails(myDetails);
       } else {
+        localStorage.clear();
+        setElements([]);
+        setPartyDetails({
+          // host: '',
+          // stickers: [],
+          name: '',
+          age: 0,
+          date: new Date(Date.now()),
+          time: '',
+          address: '',
+          // email: '',
+        });
       }
     };
 
@@ -239,7 +261,7 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
   }
   async function saveCanvas() {
     const template: template = {
-      host: userName,
+      host: userId,
       stickers: elements,
       name: partyDetails.name,
       age: partyDetails.age,
@@ -248,7 +270,7 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
       address: partyDetails.address,
       email: userMail,
     };
-    const result = await postTemplate('hola', template);
+    postTemplate(userId, template);
   }
 
   return (
