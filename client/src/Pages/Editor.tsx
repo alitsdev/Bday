@@ -53,6 +53,7 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
   useEffect(() => {
     const getMyTemplate = async () => {
       const myTemplate = await getTemplate(userId);
+      console.log(userId, 'userId');
       console.log(myTemplate, 'my Template');
       if (myTemplate) {
         const myElements = myTemplate.stickers;
@@ -63,9 +64,9 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
           time: myTemplate.time,
           address: myTemplate.address,
         };
-
         setElements([...myElements]);
         setPartyDetails(myDetails);
+      } else {
       }
     };
 
@@ -160,6 +161,7 @@ const Editor: React.FC<EditorProps> = ({ userId, userMail, userName }) => {
       setSelectedColor(defaultColor);
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
+        //To_DO check if id exists to erase
         const { id } = element;
         const elementsCopy = [
           ...elements.slice(0, id as unknown as number),

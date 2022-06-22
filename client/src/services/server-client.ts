@@ -21,7 +21,7 @@ type user = {
   userId: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
 };
 
 export const getTemplate = async (userId: string) => {
