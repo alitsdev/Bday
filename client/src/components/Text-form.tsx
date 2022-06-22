@@ -4,8 +4,8 @@ type TextFormProps = {
   setPartyDetails: React.Dispatch<
     React.SetStateAction<{
       name: string;
-      age: string;
-      date: string;
+      age: number;
+      date: Date;
       time: string;
       address: string;
     }>
@@ -14,8 +14,8 @@ type TextFormProps = {
 
 type entry = {
   name: string;
-  age: string;
-  date: string;
+  age: number;
+  date: Date;
   time: string;
   address: string;
 };
@@ -32,8 +32,8 @@ const TextForm: React.FC<TextFormProps> = ({ setPartyDetails }) => {
     };
     const entry: entry = {
       name: target.name.value,
-      age: target.age.value,
-      date: target.date.value,
+      age: +target.age.value,
+      date: new Date(target.date.value),
       time: target.time.value,
       address: target.address.value,
     };
