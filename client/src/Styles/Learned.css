@@ -1,52 +1,33 @@
-#bday {
+.learned {
 	font-family: 'Annie Use Your Telescope';
-	font-weight: bolder;
-	font-size: 100px;
-	position: absolute;
-	top: 25%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin: auto;
+	display: flex;
+	margin-top: 5%;
+	justify-content: space-around;
 }
-.login-form {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	height: 15vh;
-	width: 15vw;
-	border: solid darkgray 1px;
-	z-index: 1;
-	background-color: white;
-	font-family: 'Annie Use Your Telescope';
+
+h1 {
+	font-size: 2.5rem;
+	display: flex;
+	justify-content: center;
+}
+
+p {
+	font-size: 2rem;
+	display: flex;
+	justify-content: center;
+}
+
+ul {
 	display: flex;
 	flex-direction: column;
-	padding: 10px;
-	transform: translate(-50%, -50%);
+	align-items: flex-start;
 }
-.login-form form {
-	display: flex;
-	flex-direction: column;
-	padding: 10px;
-}
-.login-form form input {
-	padding: 10px;
-	border: 1px solid lightgray;
-}
-.login-form button {
+
+/* button Back */
+.clickMe {
 	font-family: 'Annie Use Your Telescope';
-	font-weight: bolder;
-	font-size: large;
-}
-
-.googleBtn {
-	position: absolute;
-	margin-top: 30%;
-	margin-left: 42%;
-}
-
-/* button Click me */
-/* .clickMe {
-	font-family: 'Annie Use Your Telescope';
-
+	font-size: 1rem;
 	font-weight: bold;
 	position: relative;
 	margin-left: 2%;
@@ -83,10 +64,10 @@
 	border-radius: 12px;
 	background: linear-gradient(
 		to left,
-		hsl(340deg 100% 16%) 0%,
-		hsl(340deg 100% 32%) 8%,
-		hsl(340deg 100% 32%) 92%,
-		hsl(340deg 100% 16%) 100%
+		#8b939a 0%,
+		#5b6467 8%,
+		#5b6467 92%,
+		#8b939a 100%
 	);
 }
 
@@ -96,15 +77,15 @@
 	padding: 12px 27px;
 	border-radius: 12px;
 	font-size: 1.2rem;
-	color: white;
-	background: hsl(345deg 100% 47%);
+	color: black;
+	background: #efefef;
 	will-change: transform;
 	transform: translateY(-4px);
 	transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
 }
 
 button:hover {
-	filter: brightness(110%);
+	/* filter: brightness(110%); */
 }
 
 button:hover .front {
@@ -129,4 +110,4 @@ button:active .shadow {
 
 button:focus:not(:focus-visible) {
 	outline: none;
-} */
+}
