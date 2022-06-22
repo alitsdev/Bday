@@ -8,9 +8,14 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 type LoginProps = {
   setUserId: React.Dispatch<React.SetStateAction<string>>;
   setUserMail: React.Dispatch<React.SetStateAction<string>>;
+  setUserName: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const Login: React.FC<LoginProps> = ({ setUserId }) => {
+const Login: React.FC<LoginProps> = ({
+  setUserId,
+  setUserMail,
+  setUserName,
+}) => {
   const navigate = useNavigate();
 
   const onSubmitHandler = (event: React.FormEvent) => {
@@ -19,7 +24,6 @@ const Login: React.FC<LoginProps> = ({ setUserId }) => {
     const target = event.target as typeof event.target & {
       userId: { value: string };
     };
-
     const userId: string = target.userId.value;
     if (userId) {
       setUserId(userId);
@@ -32,6 +36,10 @@ const Login: React.FC<LoginProps> = ({ setUserId }) => {
     signInWithPopup(auth, provider)
       .then((result) => {
         const googleUserId = result.user.uid;
+        const googleUserName = result.user.displayName;
+        const googleUserMail = result.user.email;
+        setUserMail(googleUserMail);
+        setUserName(googleUserName);
         setUserId(googleUserId);
         navigate(`/${googleUserId}/template`);
         console.log(result);
