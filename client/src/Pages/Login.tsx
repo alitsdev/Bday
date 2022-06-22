@@ -38,8 +38,13 @@ const Login: React.FC<LoginProps> = ({
         const googleUserId = result.user.uid;
         const googleUserName = result.user.displayName;
         const googleUserMail = result.user.email;
-        setUserMail(googleUserMail);
-        setUserName(googleUserName);
+        if (googleUserName) {
+          setUserName(googleUserName);
+        }
+        if (googleUserMail) {
+          setUserMail(googleUserMail);
+        }
+
         setUserId(googleUserId);
         navigate(`/${googleUserId}/template`);
         console.log(result);
