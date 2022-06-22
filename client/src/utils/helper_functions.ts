@@ -141,10 +141,10 @@ export const createElement = function (
         ? generator.polygon([
             [x1, y1],
             [x2, y2],
-            [(x2 + x1) / 2, y2 - y1],
+            [(x2 + x1) / 2, (y1 - (y2 - y1)) / 1.5],
           ])
         : generator.polygon(
-            [(x2 + x1) / 2, +y2],
+            [(x2 + x1) / 2, y1 - (y2 - y1)],
             [x1, y1],
             [x2, y2],
 
