@@ -6,14 +6,7 @@
   max-height: 100vh;
 }
 
-.tool-menu-container{
-  position:absolute;
-  top:50%;
-  left: 3%;
-  border: solid darkgray 1px;
-  padding: 10px;
 
-}
 #bday {
   font-family: 'Annie Use Your Telescope';
   font-weight: bolder;
@@ -103,6 +96,7 @@
   z-index: 1;
   background-color: white;
 }
+
 .text-menu {
 
   font-family: 'Annie Use Your Telescope';
@@ -122,12 +116,22 @@
   font-weight: bolder;
   font-size: large;
 }
+.tool-menu-container{
+  display: flex;
+  flex-direction: row;
+  position:absolute;
+  width:30%;
+  top:50%;
+  left: 3%;
+  padding: 10px;
 
-
+}
 .tool-menu  {
   display:flex;
   flex-direction: column;
-
+  width: fit-content;
+  padding: 10px;
+  border: solid darkgray 1px;
   font-family: 'Annie Use Your Telescope';
 
 }
@@ -142,11 +146,19 @@ appearance: none;
 }
 
 .color-menu {
-  position: absolute;
-  top: 50%;
-  left: 17%;
-}
 
+ height: 100%;
+}
+.color-picker {
+  display: flex;
+  flex-direction: column;
+}
+.color-button {
+  height: 47px;
+  width: 30px;
+  border: 0
+
+}
 #save-button {
   position: absolute;
   font-family: 'Annie Use Your Telescope';
@@ -155,10 +167,4 @@ appearance: none;
   left: 50%;
   bottom: 10%;
   transform: translate(-50%, -50%);
-}
-.color-button {
-  height: 20px;
-  width: 50px;
-  border: 0
-
 }

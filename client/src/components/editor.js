@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useLayoutEffect, useEffect, useRef } from 'react';
 import rough from 'roughjs/bundled/rough.esm.js';
 import { getTemplate, postTemplate } from '../services/server-client';
 import ColorSelector from './color-selector';
@@ -126,7 +126,7 @@ const isWithinElement = (x, y, element) => {
     const b = { x, y };
     const radius = distance(center, a);
     const offset = distance(center, b) - radius;
-    return offset < 1;
+    return offset < 0;
   }
   const a = { x: x1, y: y1 };
   const b = { x: x2, y: y2 };
@@ -141,23 +141,25 @@ const getElementAtPosition = (x, y, elements) => {
   return elements.find((element) => isWithinElement(x, y, element));
 };
 
-const localElements = localStorage.getItem('elements');
-let localElementsJson = localElements ? JSON.parse(localElements) : [];
+// const localElements = localStorage.getItem('elements');
+// let localElementsJson = localElements ? JSON.parse(localElements) : [];
 
-const localPartyDetails = localStorage.getItem('partyDetails');
-let localPartyDetailsJson = localElements
-  ? JSON.parse(localPartyDetails)
-  : {
-      name: 'NAME',
-      age: 'age',
-      date: 'date',
-      time: 'time',
-      address: 'address',
-    };
+// const localPartyDetails = localStorage.getItem('partyDetails');
+// let localPartyDetailsJson = localPartyDetails
+//   ? JSON.parse(localPartyDetails)
+//   : {
+//       name: 'NAME',
+//       age: 'age',
+//       date: 'date',
+//       time: 'time',
+//       address: 'address',
+//     };
 
 const Editor = ({ userId }) => {
-  const [elements, setElements] = useState(localElementsJson);
-  const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
+  // const [elements, setElements] = useState(localElementsJson);
+  const [elements, setElements] = useState([]);
+  // const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
+  const [partyDetails, setPartyDetails] = useState([]);
   const [guestList, setGuestList] = useState([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
@@ -168,9 +170,12 @@ const Editor = ({ userId }) => {
   const [textMenuHidden, setTextMenuHidden] = useState(true);
   const [guestMenuHidden, setGuestMenuHidden] = useState(true);
 
+  const canvasRef = useRef()
+
+
   useEffect(() => {
     const getMyTemplate = async () => {
-      const myTemplate = await getTemplate('alicia');
+      const myTemplate = await getTemplate(userId);
       if (myTemplate) {
         const myElements = myTemplate.stickers;
         const myDetails = {
@@ -190,22 +195,23 @@ const Editor = ({ userId }) => {
   }, [userId]);
 
   useLayoutEffect(() => {
-    const canvas = document.getElementById('canvas');
+    // const canvas = document.getElementById('canvas');
+    const canvas = canvasRef.current
     const context = canvas.getContext('2d');
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     const roughCanvas = rough.canvas(canvas);
-    elements.forEach((element) => roughCanvas.draw(element.roughElement));
+    if (elements.length) {elements.forEach((element) => roughCanvas.draw(element.roughElement))};
 
-    if (elements) {
+    if (elements.length) {
       localStorage.setItem('elements', JSON.stringify(elements));
     }
 
     writeDetails(partyDetails, canvas, context);
-    if (partyDetails) {
-      localStorage.setItem('partyDetails', JSON.stringify(partyDetails));
-    }
+    // if (partyDetails) {
+    //   localStorage.setItem('partyDetails', JSON.stringify(partyDetails));
+    // }
   }, [elements, partyDetails]);
 
   const updateElement = (id, x1, y1, x2, y2, type, color) => {
@@ -257,12 +263,16 @@ const Editor = ({ userId }) => {
       setSelectedColor(defaultColor);
       const element = getElementAtPosition(clientX, clientY, elements);
       if (element) {
-        const { id } = element;
-        const elementsCopy = [
-          ...elements.slice(0, id),
-          ...elements.slice(id + 1),
-        ];
-        setElements([...elementsCopy]);
+        if (elements.length === 1) {
+setElements([])
+        } else {
+          const { id } = element;
+          const elementsCopy = [
+            ...elements.slice(0, id),
+            ...elements.slice(id + 1),
+          ];
+          setElements([...elementsCopy]);
+        }
       }
     } else if (tool === 'text') {
       return;
@@ -320,7 +330,7 @@ const Editor = ({ userId }) => {
   }
   async function saveCanvas() {
     const template = {
-      host: 'alicia',
+      host: userId,
       stickers: elements,
       name: partyDetails.name,
       age: partyDetails.age,
@@ -335,7 +345,6 @@ console.log(result)
 
   return (
     <div className='Editor'>
-      {console.log(colorMenuHidden)}
       <div>
         {!guestMenuHidden && <Draggable><div className = 'text-menu-container'><GuestManager guestList={guestList} setGuestList={setGuestList} /></div></Draggable>}
         {!textMenuHidden && <Draggable><div className = 'text-menu-container'><TextForm setPartyDetails={setPartyDetails} /></div></Draggable>}
@@ -434,14 +443,14 @@ console.log(result)
               <label htmlFor='guest'>Guest-List</label>
             </div>
           </div>
+        {!colorMenuHidden && (<div className = 'color-menu'><ColorSelector setSelectedColor={setSelectedColor}></ColorSelector></div>)}
         </div>
         </Draggable>
-        {!colorMenuHidden && (
-            <Draggable><div className = 'color-menu'><ColorSelector setSelectedColor={setSelectedColor}></ColorSelector></div></Draggable>
-        )}
+       
       </div>
       <canvas
         id='canvas'
+        ref = {canvasRef}
         width={window.innerWidth}
         height={window.innerHeight}
         onMouseDown={handleMouseDown}

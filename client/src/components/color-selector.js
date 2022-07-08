@@ -12,7 +12,7 @@ const ColorSelector = ({setSelectedColor}) => {
 
 
    return (
-       <div >
+       <div className='color-picker'>
 {colors.map((item) =>{
    return (<button
    className='color-button'
