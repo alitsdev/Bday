@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../Styles/Login.style.css';
 import GoogleButton from 'react-google-button';
 import { auth } from '../services/firebase';
