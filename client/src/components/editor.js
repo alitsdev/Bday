@@ -446,7 +446,7 @@ console.log(result)
         {!colorMenuHidden && (<div className = 'color-menu'><ColorSelector setSelectedColor={setSelectedColor}></ColorSelector></div>)}
         </div>
         </Draggable>
-       
+
       </div>
       <canvas
         id='canvas'
