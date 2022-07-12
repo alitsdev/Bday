@@ -1,0 +1,17 @@
+.text-menu {
+	font-family: 'Annie Use Your Telescope';
+}
+.text-menu form {
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+}
+.text-menu form input {
+	padding: 10px;
+	border: 1px solid lightgray;
+}
+.text-menu button {
+	font-family: 'Annie Use Your Telescope';
+	font-weight: bolder;
+	font-size: large;
+}
