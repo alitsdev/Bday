@@ -1,0 +1,49 @@
+.tool-menu-container {
+	position: absolute;
+	top: 50%;
+	left: 3%;
+	border: solid darkgray 1px;
+	padding: 10px;
+}
+
+.text-menu-container {
+	position: absolute;
+	top: 50%;
+	left: 13%;
+	height: 42vh;
+	width: 15vw;
+	border: solid darkgray 1px;
+	z-index: 1;
+	background-color: white;
+}
+
+.tool-menu {
+	display: flex;
+	flex-direction: column;
+
+	font-family: 'Annie Use Your Telescope';
+}
+
+.tool-menu .input {
+	appearance: none;
+}
+
+.check-input {
+	accent-color: black;
+}
+
+.color-menu {
+	position: absolute;
+	top: 50%;
+	left: 17%;
+}
+
+#save-button {
+	position: absolute;
+	font-family: 'Annie Use Your Telescope';
+	font-weight: bolder;
+	font-size: large;
+	left: 50%;
+	bottom: 10%;
+	transform: translate(-50%, -50%);
+}
