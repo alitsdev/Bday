@@ -13,8 +13,6 @@ This project was developed using the following tools:
 - MongoDB
 - Mongoose
 
-Bday1.jpg
-
-Bday2.jpg
-
-Bday3.jpg
+![Login page](/images/Bday1.jpg)
+![Editor page](/images/Bday2.jpg)
+![Editor page](/images/Bday3.jpg)
