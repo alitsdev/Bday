@@ -1,4 +1,4 @@
 module.exports = {
   port: 3001,
-  dbName: 'partyDb',
+  dbConnectionStr: 'mongodb+srv://alitrusam:GjyjG3cNeeKroGhy@cluster0.ktummxp.mongodb.net/?retryWrites=true&w=majority',
 };
