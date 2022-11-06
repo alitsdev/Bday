@@ -1,4 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Annie+Use+Your+Telescope&display=swap');
+
+@font-face {
+  font-family: 'Annie Use Your Telescope';
+  src: local('Annie Use Your Telescope'), url(./fonts/Annie_Use_Your_Telescope/AnnieUseYourTelescope-Regular.ttf) format('truetype');
+}
+
 .App {
   margin: 0;
   padding: 0;
@@ -121,6 +127,7 @@
   flex-direction: row;
   position:absolute;
   width:30%;
+  height: 45%;
   top:50%;
   left: 3%;
   padding: 10px;
@@ -129,17 +136,24 @@
 .tool-menu  {
   display:flex;
   flex-direction: column;
-  width: fit-content;
+  justify-content: space-between;
+  width: 15%;
+  height: 100%;
   padding: 10px;
   border: solid darkgray 1px;
   font-family: 'Annie Use Your Telescope';
 
+}
+.tool {
+  display: flex;
+  justify-content: space-between;
 }
 
 
 .tool-menu .input{
 appearance: none;
 }
+
 
 .check-input{
   accent-color: black;

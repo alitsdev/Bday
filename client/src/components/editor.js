@@ -7,6 +7,15 @@ import TextForm from './text-form';
 import Draggable from 'react-draggable';
 import Moment from 'moment';
 
+import lineIcon from '../icons/line.png'
+import circleIcon from '../icons/circle.png'
+import squareIcon from '../icons/square.png'
+import triangleIcon from '../icons/triangle.png'
+import paintIcon from '../icons/paint.png'
+import moveIcon from '../icons/move.png'
+import eraseIcon from '../icons/erase.png'
+import guestIcon from '../icons/guest.png'
+
 const generator = rough.generator();
 
 function writeText(info, style = {}, medium) {
@@ -49,11 +58,18 @@ function writeDetails(text, medium, ctx) {
     { textAlign: 'center' },
     ctx
     );
-    writeText(
+    if (text.date === '...') {
+      writeText(
+        { text: `${ text.date} at ${text.time}`, x: medium.width / 2, y: 300 },
+        { textAlign: 'center' },
+        ctx
+      );
+    }
+    else {writeText(
     { text: `${ Moment(text.date).format('MMM Do')} at ${text.time}`, x: medium.width / 2, y: 300 },
     { textAlign: 'center' },
     ctx
-  );
+  )};
   writeText(
     { text: `${text.address}`, x: medium.width / 2, y: 350 },
     { textAlign: 'center' },
@@ -159,7 +175,7 @@ const Editor = ({ userId }) => {
   // const [elements, setElements] = useState(localElementsJson);
   const [elements, setElements] = useState([]);
   // const [partyDetails, setPartyDetails] = useState(localPartyDetailsJson);
-  const [partyDetails, setPartyDetails] = useState([]);
+  const [partyDetails, setPartyDetails] = useState({name: '...', age: '...', date: '...', time: '...', address: '...'});
   const [guestList, setGuestList] = useState([]);
   const [action, setAction] = useState('none');
   const [tool, setTool] = useState('line');
@@ -186,9 +202,10 @@ const Editor = ({ userId }) => {
           address: myTemplate.address,
         };
 
-        setElements([...myElements]);
         setPartyDetails(myDetails);
+        setElements([...myElements]);
       }
+      
     };
 
       getMyTemplate();
@@ -351,78 +368,7 @@ console.log(result)
         <Draggable>
         <div className='tool-menu-container'>
           <div className='tool-menu'>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='line'
-                checked={tool === 'line'}
-                onChange={() => handleChange('line')}
-              />
-            <label htmlFor='line'>Line</label>
-            </div>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='triangle'
-                checked={tool === 'triangle'}
-                onChange={() => handleChange('triangle')}
-              />
-              <label htmlFor='triangle'>Triangle</label>
-            </div>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='rectangle'
-                checked={tool === 'rectangle'}
-                onChange={() => handleChange('rectangle')}
-              />
-              <label htmlFor='rectangle'>Rectangle</label>
-            </div>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='circle'
-                checked={tool === 'circle'}
-                onChange={() => handleChange('circle')}
-              />
-              <label htmlFor='circle'>Circle</label>
-            </div>
-
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='paint'
-                checked={tool === 'paint'}
-                onChange={() => handleChange('paint')}
-              />
-              <label htmlFor='paint'>Paint</label>{' '}
-            </div>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='move'
-                checked={tool === 'move'}
-                onChange={() => handleChange('move')}
-              />
-              <label htmlFor='move'>Move</label>
-            </div>
-            <div>
-              <input
-                className='check-input'
-                type='checkbox'
-                id='eraser'
-                checked={tool === 'eraser'}
-                onChange={() => handleChange('eraser')}
-              />
-              <label htmlFor='eraser'>Eraser</label>
-            </div>
-            <div>
+          <div className='tool'>
               <input
                 className='check-input'
                 type='checkbox'
@@ -430,9 +376,80 @@ console.log(result)
                 checked={tool === 'text'}
                 onChange={() => handleChange('text')}
               />
-              <label htmlFor='text'>Text</label>
+              <label htmlFor='text'>AaBbCc</label>
             </div>
-            <div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='line'
+                checked={tool === 'line'}
+                onChange={() => handleChange('line')}
+              />
+              <img src={lineIcon} alt='line'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='triangle'
+                checked={tool === 'triangle'}
+                onChange={() => handleChange('triangle')}
+              />
+              <img src={triangleIcon} alt='triangle'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='rectangle'
+                checked={tool === 'rectangle'}
+                onChange={() => handleChange('rectangle')}
+              />
+              <img src={squareIcon} alt='square'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='circle'
+                checked={tool === 'circle'}
+                onChange={() => handleChange('circle')}
+              />
+              <img src={circleIcon} alt='circle'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='paint'
+                checked={tool === 'paint'}
+                onChange={() => handleChange('paint')}
+              />
+              <img src={paintIcon} alt='paint'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='move'
+                checked={tool === 'move'}
+                onChange={() => handleChange('move')}
+              />
+              <img src={moveIcon} alt='move'></img>
+            </div>
+            <div className='tool'>
+              <input
+                className='check-input'
+                type='checkbox'
+                id='eraser'
+                checked={tool === 'eraser'}
+                onChange={() => handleChange('eraser')}
+              />
+              <img src={eraseIcon} alt='erase'></img>
+            </div>
+
+            <div className='tool'>
               <input
                 className='check-input'
                 type='checkbox'
@@ -440,7 +457,7 @@ console.log(result)
                 checked={tool === 'guest'}
                 onChange={() => handleChange('guest')}
               />
-              <label htmlFor='guest'>Guest-List</label>
+              <img src={guestIcon} alt='guest'></img>
             </div>
           </div>
         {!colorMenuHidden && (<div className = 'color-menu'><ColorSelector setSelectedColor={setSelectedColor}></ColorSelector></div>)}
